@@ -11,7 +11,9 @@ import "./game-shell.css";
 createRoot(document.getElementById("root")!).render(<App />);
 if ("serviceWorker" in navigator && import.meta.env.PROD)
   window.addEventListener("load", () => {
-    void navigator.serviceWorker.register("/sw.js");
+    void navigator.serviceWorker
+      .register("/sw.js", { updateViaCache: "none" })
+      .catch(() => {});
   });
 
 import "./living-cove.css";

@@ -1,4 +1,5 @@
 import { flushSync } from "react-dom";
+import LanguageSwitch from "./LanguageSwitch";
 import HelpGuide from "./HelpGuide";
 import { fitDecoration } from "./sceneGeometry";
 import { brushTerrain } from "./terrain";
@@ -911,11 +912,19 @@ export default function App() {
           { once: true },
         );
         reg.waiting.postMessage("ACTIVATE");
-      } else
-        notify(
-          "The update is downloading. Try again shortly.",
-          "Das Update wird geladen. Versuche es gleich erneut.",
-        );
+      } else {
+        // New workers can already be active; navigation fetches a fresh shell.
+        try {
+          await reg?.update();
+        } catch {
+          notify(
+            "The update needs an internet connection. Please try again when online.",
+            "Für das Update brauchst du eine Internetverbindung. Versuche es erneut, wenn du online bist.",
+          );
+          return;
+        }
+        location.reload();
+      }
     } catch {
       setStorageError(true);
     }
@@ -988,6 +997,12 @@ export default function App() {
           </button>
         </div>
       </header>
+      {!save && (
+        <div className="landing-language">
+          <small>v{VERSION}</small>
+          <LanguageSwitch lang={lang} onChange={setLang} />
+        </div>
+      )}
       {!save && (
         <WelcomeInstall
           lang={lang}
@@ -2231,6 +2246,7 @@ export default function App() {
               <>
                 <div className="eyebrow">LITTLE FISHTANK</div>
                 <h2>{t("A moment to surface.", "Kurz auftauchen.")}</h2>
+                <LanguageSwitch lang={lang} onChange={setLang} />
                 <div className="menu-list">
                   {save &&
                     btn(

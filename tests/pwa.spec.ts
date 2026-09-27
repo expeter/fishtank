@@ -97,8 +97,10 @@ test("a waiting update refuses failed saves, then saves successfully before relo
   const filename = `update-check-${Date.now()}.js`;
   await writeFile(
     `dist/${filename}`,
-    (await readFile("dist/sw.js", "utf8")) +
-      "\n// update lifecycle verification\n",
+    (await readFile("dist/sw.js", "utf8")).replace(
+      ".then(()=>self.skipWaiting())",
+      "",
+    ) + "\n// update lifecycle verification\n",
   );
   try {
     await page.route("**/version.json", (route) =>

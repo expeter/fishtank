@@ -250,3 +250,50 @@
   border: 2px solid #eefaf1;
   border-radius: 50%;
 }
+
+.language-flags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.app .language-flags button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 2px solid #bca15f;
+  border-radius: 12px;
+  background: #fff4d8;
+  color: #193d43;
+  font-size: 13px;
+  transition: none;
+}
+.app .language-flags button[aria-pressed="true"] {
+  background: #155d55;
+  color: #fff9df;
+  border-color: #e3c571;
+}
+.language-flags svg {
+  width: 30px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+.app .landing-language {
+  width: 92%;
+  max-width: 1180px;
+  margin: 0 auto 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.landing-language small {
+  color: #fff4d8;
+  font-size: 12px;
+}
+.modal .language-flags {
+  margin-bottom: 16px;
+}
