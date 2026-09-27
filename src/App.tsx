@@ -542,7 +542,9 @@ export default function App() {
           onClick={() => startGame(a.kind, f.id)}
         >
           {a.icon}
-          <span>{t(a.en, a.de)}</span>
+          <span>
+            {a.kind === "replay" ? t("Replay", "Wiederholen") : t(a.en, a.de)}
+          </span>
         </button>
       ))}
     </div>
@@ -1632,7 +1634,9 @@ export default function App() {
                         <FoodIcon kind={id as FoodKind} />
                       </span>
                       <small>
-                        {t(en, de)} ·{" "}
+                        {id === "algae" ? t("Algae", "Algen") : t(en, de)}
+                      </small>
+                      <small className="food-price">
                         {save.mode === "creative"
                           ? t("Free", "Gratis")
                           : `${FOOD_PRICES[id as FoodKind]} 🪙`}
@@ -2602,11 +2606,12 @@ export default function App() {
                 )}
                 <div className="segmented">
                   <button
+                    aria-label={t("Little friends", "Kleine Freunde")}
                     className={tab === "animals" ? "active" : ""}
                     onClick={() => setTab("animals")}
                   >
                     <FishIcon size={17} />
-                    {t("Little friends", "Kleine Freunde")}
+                    {t("Animals", "Tiere")}
                   </button>
                   <button
                     className={tab === "critters" ? "active" : ""}
@@ -2616,11 +2621,12 @@ export default function App() {
                     {t("Little helpers", "Helfer")}
                   </button>
                   <button
+                    aria-label={t("Lovely things", "Schöne Dinge")}
                     className={tab === "decor" ? "active" : ""}
                     onClick={() => setTab("decor")}
                   >
                     <Leaf size={17} />
-                    {t("Lovely things", "Schöne Dinge")}
+                    {t("Decor", "Deko")}
                   </button>
                 </div>
                 {save.mode === "creative" && tab !== "decor" && (
@@ -2858,9 +2864,13 @@ export default function App() {
                     className="outline"
                     disabled={!undo.length}
                     onClick={undoLayout}
+                    aria-label={t(
+                      "Undo last edit",
+                      "Letzte Änderung zurücknehmen",
+                    )}
                   >
                     <RotateCcw size={16} />
-                    {t("Undo last edit", "Letzte Änderung zurücknehmen")}
+                    {t("Undo", "Zurück")}
                   </button>
                   <button
                     className="primary"

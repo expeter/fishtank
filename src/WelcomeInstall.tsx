@@ -38,9 +38,15 @@ export function WelcomeInstall({
             ? "Mit einem Tipp wieder bei deinen Fischen. Du kannst auch direkt hier spielen."
             : "One tap takes you back to your fish. You can also play right here."}
         </p>
-        <button className="welcome-install-action" onClick={onInstall}>
+        <button
+          className="welcome-install-action"
+          aria-label={
+            de ? "Auf diesem Handy installieren" : "Install on this phone"
+          }
+          onClick={onInstall}
+        >
           <Download size={18} aria-hidden="true" />
-          {de ? "Auf diesem Handy installieren" : "Install on this phone"}
+          {de ? "App installieren" : "Install app"}
         </button>
         {!available && (
           <small>

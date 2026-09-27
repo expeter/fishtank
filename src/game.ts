@@ -16,7 +16,7 @@ export const slotSize = (id: number): WorldSize =>
 export const SAND_BINS = 48;
 export const MAX_SAND_HEIGHT = 0.22;
 export const ANIMAL_CAPACITY = 24;
-export const VERSION = "1.0.2";
+export const VERSION = "1.0.3";
 export const tiers = [0, 150, 600, 1800, 6000, 20000, 60000],
   prices = [20, 60, 180, 500, 2000, 8000, 24000],
   growth = [600, 1800, 7200, 14400, 14400, 21600, 43200];

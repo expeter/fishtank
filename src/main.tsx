@@ -27,3 +27,5 @@ import "./welcome.css";
 import "./quiet-ui.css";
 
 import "./mobile-workbench.css";
+
+import "./button-labels.css";

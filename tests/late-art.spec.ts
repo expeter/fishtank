@@ -24,7 +24,14 @@ test("late fish artwork and long German shop labels fit phone cards", async ({
       ],
       ["Waldküste", ["Pfauenkaiserfisch", "Achilles-Doktorfisch", "Zebrahai"]],
     ] as const) {
-      await page.getByRole("button", { name: habitat, exact: true }).click();
+      const destination = page.getByRole("button", {
+        name: habitat,
+        exact: true,
+        includeHidden: true,
+      });
+      // Narrow phones show only the other habitat as a destination icon.
+      if ((await destination.getAttribute("aria-pressed")) !== "true")
+        await destination.click();
       await page.getByRole("button", { name: /^Kleiner Laden/ }).click();
       await page
         .getByRole("button", { name: "Kleine Freunde", exact: true })

@@ -1,0 +1,76 @@
+/* Action labels stay whole. Explanatory copy in mode cards is separate text. */
+.app button {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+.app .mode-options {
+  grid-template-columns: 1fr;
+}
+.app .mode-options small {
+  white-space: normal;
+}
+.playing .panel-menu .menu-list {
+  grid-template-columns: 1fr;
+}
+.playing .panel-menu .menu-list > button {
+  flex-direction: row;
+  justify-content: flex-start;
+  min-height: 44px;
+  gap: 9px;
+  font-size: 12px;
+  padding: 8px;
+}
+.playing .panel-shop .catalog {
+  grid-auto-columns: max-content;
+}
+.playing .panel-shop .catalog > button {
+  min-width: 140px;
+  padding-inline: 10px;
+}
+.app .guide-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+}
+.app .guide-habitats {
+  flex-wrap: wrap;
+}
+.app .fish-game-buttons {
+  grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+}
+.app .tank-equipment {
+  flex-direction: column;
+}
+.app .modal-actions {
+  flex-wrap: wrap;
+}
+.playing .food-tools small {
+  white-space: nowrap;
+  font-size: 10px;
+}
+.playing .food-tools .food-price {
+  font-size: 9px;
+  line-height: 1;
+}
+.app .swatches {
+  display: flex;
+  flex-wrap: wrap;
+}
+.app .swatches button {
+  flex: 1 0 auto;
+  min-width: max-content;
+}
+.app .modal-actions > button {
+  flex: 1 0 auto;
+  min-width: max-content;
+}
+.app .panel-residents button {
+  white-space: normal;
+}
+/* A taller group of readable actions must scroll inside the fish card, including in landscape. */
+.playing .friend-overlay .compact-friend {
+  max-height: min(440px, calc(100dvh - env(safe-area-inset-bottom) - 92px));
+}
+.app .fish-game-buttons button span {
+  font-size: 12px !important;
+}

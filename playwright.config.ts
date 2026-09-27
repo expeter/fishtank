@@ -5,6 +5,7 @@ export default defineConfig({
   testDir: "tests",
   testMatch: "*.spec.ts",
   use: {
+    screenshot: "only-on-failure",
     baseURL: process.env.FT_BASE_URL || "http://localhost:5179",
     launchOptions: {
       executablePath: process.env.FT_CHROMIUM || undefined,
@@ -22,8 +23,10 @@ export default defineConfig({
   webServer: process.env.FT_BASE_URL
     ? undefined
     : {
-        command: "npm run dev -- --port 5179",
+        command: process.env.FT_PRODUCTION
+          ? "npm run preview -- --port 5179"
+          : "npm run dev -- --port 5179",
         url: "http://localhost:5179",
-        reuseExistingServer: true,
+        reuseExistingServer: !process.env.CI,
       },
 });

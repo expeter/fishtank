@@ -178,6 +178,9 @@ test("a newer version is offered without interrupting play", async ({
   await page
     .getByRole("button", { name: "Save and update", exact: true })
     .click();
-  await expect(page.getByRole("status")).toContainText("downloading");
+  // An explicit update now reloads the network-first shell even when the worker
+  // has already activated. The saved world remains available after that reload.
+  await page.getByRole("button", { name: "Come on in" }).click();
   await expect(page.locator(".tank canvas")).toBeVisible();
+  await expect(page.locator(".friends")).toContainText("2");
 });

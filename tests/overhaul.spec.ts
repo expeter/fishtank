@@ -14,7 +14,7 @@ test("phone world: wallet, persistent tools, field guide, sizes, panning and sav
   await page.getByRole("button", { name: "Let’s dive in" }).click();
 
   const stage = page.locator(".tank");
-  await expect(stage).toHaveCSS("height", "714px");
+  await expect(stage).toHaveCSS("height", "768px");
   await expect(page.locator(".coin-pill")).toContainText("100");
   const food = page.getByRole("button", { name: "Feed A little nibble" });
   await expect(food).toHaveAttribute("aria-pressed", "true");

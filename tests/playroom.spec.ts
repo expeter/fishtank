@@ -114,7 +114,8 @@ test("decoration editing has one tray at a time and the expanded catalogue can b
   const dock = (await page.locator(".toolbar").boundingBox())!;
   expect(editor.y).toBeGreaterThanOrEqual(8);
   expect(editor.width).toBeLessThanOrEqual(180);
-  expect(editor.y + editor.height).toBeLessThan(422);
+  const header = (await page.locator(".header").boundingBox())!;
+  expect(editor.y).toBeGreaterThanOrEqual(header.y + header.height);
   expect(editor.y + editor.height).toBeLessThan(dock.y);
   expect(editor.x).toBeGreaterThanOrEqual(0);
   expect(editor.x + editor.width).toBeLessThanOrEqual(390);

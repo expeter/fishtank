@@ -163,3 +163,11 @@ German/English flag buttons appear on the start screen and game menu; the choice
 ## Version 1.0.2: one bottom row
 
 Menu and sound return to the top right. The habitat now reserves 76px instead of 130px for bottom controls. Landscape fits world selection, tools and counters in one row. Narrow portrait screens use one destination icon beside the tools and show counters top-left. Temporary panels move with the new dock, and the item editor stays below the header buttons. Ten responsive/workbench browser checks pass at 320px, 393px and 851px landscape widths.
+
+## Version 1.0.3: readable button labels
+
+Action labels stay on one line without splitting words. Shorter visible labels retain descriptive accessible names. Menus and card layouts make room for longer German text; food names and prices have separate intentional rows. Fish actions fit their buttons, and the card scrolls within the landscape viewport.
+
+`tests/button-labels.spec.ts` checks English and German at 320×568, 393×851 and 851×393 across startup, creation, food, menus, settings, shop tabs, decorating, residents, fish actions and book chapters. DOM Range measurements detect wrapped action labels, split words, and clipped/overflowing text. Explanatory mode-card paragraphs may wrap normally. GitHub Pages deployment now requires these browser checks plus the one-row-control checks to pass; failures retain screenshots and error details.
+
+Validation for 1.0.3: 97 unit tests, production build and 70 unique browser scenarios verified across the full run and focused reruns. The new labels were visually reviewed in English/German portrait and landscape screenshots.

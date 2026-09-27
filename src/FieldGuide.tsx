@@ -243,8 +243,12 @@ export default function FieldGuide({
         >
           {t(`${animals.length} animals`, `${animals.length} Tiere`)}
         </button>
-        <button aria-pressed={tab === "water"} onClick={() => setTab("water")}>
-          {t("Water & biology", "Wasser & Biologie")}
+        <button
+          aria-label={t("Water & biology", "Wasser & Biologie")}
+          aria-pressed={tab === "water"}
+          onClick={() => setTab("water")}
+        >
+          {t("Water", "Wasser")}
         </button>
       </div>
       {tab === "animals" ? (
@@ -271,18 +275,20 @@ export default function FieldGuide({
               aria-label={t("Animal chapters", "Tierkapitel")}
             >
               <button
+                aria-label={t("Care & home", "Pflege & Zuhause")}
                 aria-pressed={chapter === "care"}
                 onClick={() => setChapter("care")}
               >
                 <span aria-hidden="true">01</span>
-                {t("Care & home", "Pflege & Zuhause")}
+                {t("Care", "Pflege")}
               </button>
               <button
+                aria-label={t("Life & biology", "Leben & Biologie")}
                 aria-pressed={chapter === "biology"}
                 onClick={() => setChapter("biology")}
               >
                 <span aria-hidden="true">02</span>
-                {t("Life & biology", "Leben & Biologie")}
+                {t("Biology", "Biologie")}
               </button>
             </div>
             {chapter === "biology" && fishDiscovery[a.id] && (
