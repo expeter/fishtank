@@ -23,6 +23,6 @@
 - [x] 61 unique production browser scenarios verified across the full run and focused reruns, including paid feeding, recently fed breeding, allowance, persistent cleanup, teasers and narrow-screen interactions. The lazy-loaded book opens for the first time offline.
 - [x] Final bilingual narrow-screen visual review, including encyclopedia and cleanup. Fixed chapter-button transition contrast and wrapping numbers; screenshots in `docs/screenshots/v1.0.0-*`.
 - [ ] Real Android/iPhone audio, installation, sharing and sustained performance checks.
-- [ ] Deployment: user must configure the GitHub Pages source setting before publication can complete. Deployment remains pending; no live-release claim is made here.
+- [x] Published to https://fishtank.minizap.online via GitHub Pages workflow run 36348390264. Live HTTPS browser check returned 200, version 1.0.0, fullscreen manifest, successful world creation and offline first-open book, with zero JavaScript errors. This environment had an old DNS cache; the check used the GitHub address returned by public DNS.
 
 Fish inspection is free: a tap starting on a fish opens its card without purchasing food. A paid water tap does not open a card if a fish swims underneath it. Empty-world prompts are hidden while cleaning, playing, exploring or designing.

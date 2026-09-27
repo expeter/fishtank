@@ -153,3 +153,5 @@ GitHub Pages workflow builds and publishes `dist` from `main`. Set Pages source 
 Paid food and active-play pocket money, recently-fed breeding, persistent optional window/shore cleanup, staggered woodland visitors, four rotating original music themes and expanded bilingual species chapters. Homework and environmental mini-jobs are teasers only; see [next-version planning](docs/next-version-minigames.md).
 
 Release validation: 97 unit tests, production build and 61 browser scenarios across full/focused runs. Phone-width English/German book chapters and first-open offline book loading are covered. Physical-device installation/audio/performance still need device testing.
+
+Live release: [fishtank.minizap.online](https://fishtank.minizap.online). GitHub Pages deployment and live HTTPS phone-sized browser smoke test passed: world creation, fullscreen manifest and offline book, no JavaScript errors.
