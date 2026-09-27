@@ -31,7 +31,7 @@ for (const [slot, size, ratio] of [
   [1, "medium", 1.6],
   [2, "large", 2.4],
 ] as const) {
-  test(`slot ${slot + 1} keeps its ${size} size and lower controls leave the forest clear`, async ({
+  test(`slot ${slot + 1} keeps its ${size} size with a single bottom control row`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: 320, height: 568 });
@@ -46,7 +46,8 @@ for (const [slot, size, ratio] of [
     for (const selector of controls) {
       const box = (await page.locator(selector).boundingBox())!;
       boxes.push(box);
-      expect(box.y).toBeGreaterThan(400);
+      if (selector === ".habitat-tabs") expect(box.y).toBeGreaterThan(480);
+      else expect(box.y).toBeLessThan(20);
       expect(box.x).toBeGreaterThanOrEqual(0);
       expect(box.x + box.width).toBeLessThanOrEqual(320);
     }
@@ -54,7 +55,12 @@ for (const [slot, size, ratio] of [
       for (let j = i + 1; j < boxes.length; j++) {
         const a = boxes[i],
           b = boxes[j];
-        expect(a.x + a.width <= b.x || b.x + b.width <= a.x).toBe(true);
+        expect(
+          a.x + a.width <= b.x ||
+            b.x + b.width <= a.x ||
+            a.y + a.height <= b.y ||
+            b.y + b.height <= a.y,
+        ).toBe(true);
       }
     await page
       .getByRole("button", { name: "Woodland coast", exact: true })

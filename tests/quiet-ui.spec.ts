@@ -32,7 +32,30 @@ for (const [width, height] of [
     await expect(foods).toBeVisible();
     const d = (await dock.boundingBox())!,
       f = (await foods.boundingBox())!;
-    expect(Math.abs(d.x + d.width / 2 - (f.x + f.width / 2))).toBeLessThan(2);
+    // Wide trays stay on screen even when the narrow-phone dock shifts beside the world toggle.
+    const tank = (await page.locator(".tank").boundingBox())!;
+    expect(tank.height).toBeGreaterThanOrEqual(height - 80);
+    const header = (await page.locator(".header").boundingBox())!;
+    expect(header.y).toBeLessThan(20);
+    expect(header.x + header.width).toBeGreaterThan(width - 20);
+    await expect(
+      page.getByRole("button", { name: "Ton umschalten (M)", exact: true }),
+    ).toBeVisible();
+    if (width >= 600) {
+      for (const selector of [".habitat-tabs", ".world-heading"]) {
+        const b = (await page.locator(selector).boundingBox())!;
+        expect(
+          Math.abs(b.y + b.height / 2 - (d.y + d.height / 2)),
+        ).toBeLessThan(5);
+        expect(b.x + b.width <= d.x || b.x >= d.x + d.width).toBe(true);
+      }
+    }
+    for (const button of await dock.getByRole("button").all()) {
+      const b = (await button.boundingBox())!;
+      expect(b.width).toBeGreaterThanOrEqual(44);
+      expect(b.x).toBeGreaterThanOrEqual(0);
+      expect(b.x + b.width).toBeLessThanOrEqual(width);
+    }
     expect(f.y + f.height).toBeLessThanOrEqual(d.y);
     expect(f.x).toBeGreaterThanOrEqual(0);
     expect(f.x + f.width).toBeLessThanOrEqual(width);

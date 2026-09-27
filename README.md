@@ -159,3 +159,7 @@ Live release: [fishtank.minizap.online](https://fishtank.minizap.online). GitHub
 ## Version 1.0.1: visible language choice and fresh online launches
 
 German/English flag buttons appear on the start screen and game menu; the choice persists and otherwise follows browser language. The start screen shows the current version. New offline workers activate without forcing a running game to reload. Reopening online fetches fresh HTML; offline launches use the precached matching shell/assets. The previous asset cache remains available for older open tabs. Saves are never cleared by updates. The save/update button also handles an already-active worker and reports network failures separately from save failures.
+
+## Version 1.0.2: one bottom row
+
+Menu and sound return to the top right. The habitat now reserves 76px instead of 130px for bottom controls. Landscape fits world selection, tools and counters in one row. Narrow portrait screens use one destination icon beside the tools and show counters top-left. Temporary panels move with the new dock, and the item editor stays below the header buttons. Ten responsive/workbench browser checks pass at 320px, 393px and 851px landscape widths.
