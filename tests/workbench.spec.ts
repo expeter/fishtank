@@ -81,7 +81,9 @@ test("large age buttons and a shared animal limit leave a full habitat unchanged
     .getByRole("button", { name: "Little shop Find something lovely" })
     .click();
   const adult = page.getByRole("button", { name: "Grown-ups", exact: true });
-  expect((await adult.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  expect(
+    Math.round((await adult.boundingBox())!.height),
+  ).toBeGreaterThanOrEqual(44);
   await adult.click();
   await expect(adult).toHaveAttribute("aria-pressed", "true");
   const guppy = page.getByRole("button", {

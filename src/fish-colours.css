@@ -1,0 +1,91 @@
+.playing .panel-shop .animal-card {
+  min-width: 154px;
+  border: 2px solid #c79b59;
+  border-radius: 14px;
+  background: #fff9de;
+  scroll-snap-align: start;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.playing .animal-card .animal-buy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: 0;
+  box-shadow: none;
+  padding: 4px 8px;
+  background: transparent;
+}
+.playing .animal-card .fish-colours {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+.playing .animal-card .colour-choice {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 6px;
+  position: relative;
+  border: 2px solid transparent;
+  background: transparent;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.playing .animal-card .colour-choice[aria-pressed="true"] {
+  border-color: #285348;
+  background: #d8eed9;
+}
+.colour-choice > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid #3f5147;
+}
+.colour-choice > svg {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  background: #285348;
+  color: white;
+  border-radius: 50%;
+}
+.playing .animal-card .colour-name {
+  font-size: 11px;
+  color: #35483d;
+  text-align: center;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+/* Keep the complete preview and swatches inside the phone sheet. */
+.playing .panel-shop .catalog {
+  grid-template-rows: auto;
+}
+.playing .panel-shop .shop-modal {
+  max-height: min(340px, calc(100dvh - 140px));
+  overflow-y: auto;
+}
+.playing .panel-shop .shop-wallet[data-creative="true"] {
+  display: none;
+}
+.playing .panel-shop .animal-age {
+  margin: 2px 0;
+}
+.playing .panel-shop .animal-buy .catalog-art {
+  height: 40px;
+  flex-basis: 40px;
+}
+@media (max-height: 500px) {
+  .playing .panel-shop .shop-modal h2 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}

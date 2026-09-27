@@ -12,7 +12,7 @@ import { newBirths } from "../src/births";
 describe("individual appearances and family discoveries", () => {
   it("gives each species distinct stable shades and bounded size differences", () => {
     for (const a of animals) {
-      const fish = { ...makeFish(a.id), seed: 12 };
+      const fish = { ...makeFish(a.id), seed: 12, variant: undefined };
       expect(fishColor(fish)).toBe(fishColor(JSON.parse(JSON.stringify(fish))));
       expect(fishColor({ ...fish, seed: 88 })).not.toBe(fishColor(fish));
       for (let seed = 0; seed < 100; seed++) {

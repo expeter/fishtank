@@ -1,8 +1,13 @@
+import { getFishVariant } from "./fishVariants";
 import { animals, type Fish } from "./game";
 import { lifeNoise } from "./feeding";
 
 /** A saved seed gives each animal a stable shade without changing its species identity. */
-export function fishColor(fish: Pick<Fish, "species" | "seed">): string {
+export function fishColor(
+  fish: Pick<Fish, "species" | "seed" | "variant">,
+): string {
+  const chosen = getFishVariant(fish.species, fish.variant);
+  if (chosen) return chosen.color;
   const hex = animals.find((a) => a.id === fish.species)!.color;
   const [r, g, b] = [1, 3, 5].map(
     (i) => parseInt(hex.slice(i, i + 2), 16) / 255,
@@ -52,16 +57,20 @@ export interface FishMarkings {
 /** Coordinates fit the common body ellipse (-24..24, -15..15). Clip to the
  * species silhouette in the renderer so markings never obscure its identifying fins. */
 export function fishMarkings(
-  fish: Pick<Fish, "seed" | "species">,
+  fish: Pick<Fish, "seed" | "species" | "variant">,
 ): FishMarkings {
-  const n = (salt: number) => lifeNoise(fish.seed + salt * 17.3);
+  const chosen = getFishVariant(fish.species, fish.variant);
+  const n = (salt: number) =>
+    lifeNoise((chosen ? 50 : fish.seed) + salt * 17.3);
   const hue = Math.floor(n(8) * 360);
   return {
-    pattern: (["plain", "freckles", "bands", "patches", "shimmer"] as const)[
-      Math.floor(n(1) * 5)
-    ],
-    accent: `hsla(${hue}, 72%, 27%, 0.68)`,
-    pale: `hsla(${(hue + 35) % 360}, 95%, 88%, 0.75)`,
+    pattern:
+      chosen?.pattern ??
+      (["plain", "freckles", "bands", "patches", "shimmer"] as const)[
+        Math.floor(n(1) * 5)
+      ],
+    accent: chosen?.accent ?? `hsla(${hue}, 72%, 27%, 0.68)`,
+    pale: chosen?.accent ?? `hsla(${(hue + 35) % 360}, 95%, 88%, 0.75)`,
     bodyWidth: 0.91 + n(2) * 0.18,
     bodyHeight: 0.87 + n(3) * 0.26,
     tailLength: 0.78 + n(4) * 0.48,

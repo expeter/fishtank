@@ -1,3 +1,4 @@
+import { getFishVariant } from "./fishVariants";
 import { terrainSurface, TERRAIN_BINS } from "./terrain";
 import { drawShore } from "./forest";
 import {
@@ -88,6 +89,7 @@ export function drawFish(
   c.save();
   c.translate(x, y);
   const markings = fishMarkings(f);
+  const variant = getFishVariant(f.species, f.variant);
   const individualSize = size * fishSize(f);
   c.scale(dir * individualSize, individualSize);
   const sleeping =
@@ -422,7 +424,7 @@ export function drawFish(
     c.strokeStyle = "#16394c";
     c.lineWidth = 2;
     c.stroke();
-    c.fillStyle = "#e7f6ff";
+    c.fillStyle = variant ? "#329bd1" : "#e7f6ff";
     for (let i = 0; i < 12; i++) {
       c.beginPath();
       c.arc(-2 + (i % 3) * 7, -22 + Math.floor(i / 3) * 14, 2, 0, 7);
@@ -593,13 +595,26 @@ export function drawFish(
     c.ellipse(-6, -23, 14, 12, 0, 0, 7);
     c.fill();
     c.fillRect(-30, -25, 20, 7);
+    if (variant?.pattern === "freckles") {
+      c.fillStyle = variant.accent;
+      for (const [x, y] of [
+        [-7, -17],
+        [-10, -7],
+        [-5, 2],
+        [5, 12],
+      ]) {
+        c.beginPath();
+        c.arc(x, y, 1.6, 0, 7);
+        c.fill();
+      }
+    }
     c.fillStyle = "#254149";
     c.beginPath();
     c.arc(-10, -27, 3, 0, 7);
     c.fill();
   } else {
     c.scale(markings.bodyWidth, markings.bodyHeight);
-    c.fillStyle = a.id === "tang" ? "#f2d476" : a.color;
+    c.fillStyle = a.id === "tang" ? "#f2d476" : (variant?.fin ?? a.color);
     c.save();
     c.translate(26, 0);
     c.rotate(wiggle);
@@ -717,8 +732,32 @@ export function drawFish(
         c.fill();
       }
     }
+    if (variant && a.id === "guppy") {
+      c.fillStyle = "#303b35";
+      for (const [x, y] of [
+        [-12, 5],
+        [15, 2],
+      ]) {
+        c.beginPath();
+        c.ellipse(x, y, 3, 4, 0, 0, 7);
+        c.fill();
+      }
+    }
+    if (variant && a.id === "swordtail") {
+      c.strokeStyle = variant.accent;
+      c.lineWidth = 2;
+      c.beginPath();
+      c.moveTo(-33, 1);
+      c.lineTo(33, 1);
+      c.stroke();
+    }
     if (["zebrafish", "discus", "mandarin"].includes(a.id)) {
-      c.strokeStyle = a.id === "mandarin" ? "#ff8f21" : "#163f78";
+      c.strokeStyle =
+        a.id === "mandarin"
+          ? "#ff8f21"
+          : a.id === "discus" && variant
+            ? variant.accent
+            : "#163f78";
       c.lineWidth = 3;
       for (let i = 0; i < 5; i++) {
         c.beginPath();

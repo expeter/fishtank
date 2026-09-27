@@ -1,3 +1,4 @@
+import FishShopCard from "./FishShopCard";
 import { flushSync } from "react-dom";
 import LanguageSwitch from "./LanguageSwitch";
 import HelpGuide from "./HelpGuide";
@@ -148,6 +149,7 @@ export default function App() {
   const [postcardBusy, setPostcardBusy] = useState(false);
   const postcardSource = useRef<HTMLCanvasElement | null>(null);
   const postcardMeta = useRef({ worldName: "", timestamp: 0 });
+  const [fishColours, setFishColours] = useState<Record<string, string>>({});
   const [foodKind, setFoodKind] = useState<FoodKind>("flakes");
   const [guideSpecies, setGuideSpecies] = useState<string | null>(null);
   const [invitedFishId, setInvitedFishId] = useState<string | null>(null);
@@ -600,7 +602,9 @@ export default function App() {
       (save.mode === "progression" && save.coins < prices[a.tier])
     )
       return;
-    setSave((s) => (s ? buyFish(s, id, adult) : s));
+    setSave((s) =>
+      s ? buyFish(s, id, adult, Date.now(), fishColours[id]) : s,
+    );
     if (effects) effect("buy");
     notify("A new friend has moved in!", "Ein neuer Freund ist eingezogen!");
   };
@@ -2612,7 +2616,11 @@ export default function App() {
                   {t("A FEW LOVELY THINGS", "EIN PAAR SCHÖNE DINGE")}
                 </div>
                 <h2>{t("The little shop", "Der kleine Laden")}</h2>
-                <p className="shop-wallet" aria-live="polite">
+                <p
+                  className="shop-wallet"
+                  data-creative={save.mode === "creative"}
+                  aria-live="polite"
+                >
                   {save.mode === "creative"
                     ? t(
                         "Pick anything. This world is your canvas.",
@@ -2721,41 +2729,25 @@ export default function App() {
                               )),
                         )
                         .map((a) => (
-                          <button
+                          <FishShopCard
                             key={a.id}
-                            disabled={
-                              !unlocked(a.tier) ||
-                              (save.mode === "progression" &&
-                                save.coins < prices[a.tier])
+                            animal={a}
+                            lang={lang}
+                            mode={save.mode}
+                            unlocked={unlocked(a.tier)}
+                            affordable={
+                              save.mode === "creative" ||
+                              save.coins >= prices[a.tier]
                             }
-                            onClick={() => buyAnimal(a.id)}
-                          >
-                            <div
-                              className="catalog-art"
-                              style={{ color: a.color }}
-                            >
-                              <Artwork animal={a.id} />
-                            </div>
-                            <strong>{a[lang]}</strong>
-                            <small>
-                              {!unlocked(a.tier) ? (
-                                <>
-                                  <Lock size={12} />
-                                  {tiers[a.tier]} {t("earned", "verdient")}
-                                </>
-                              ) : save.mode === "creative" ? (
-                                <>
-                                  <Plus size={13} />
-                                  {t("Add friend", "Hinzufügen")}
-                                </>
-                              ) : (
-                                <>
-                                  <Coins size={13} />
-                                  {prices[a.tier]}
-                                </>
-                              )}
-                            </small>
-                          </button>
+                            selected={fishColours[a.id]}
+                            onSelect={(variant) =>
+                              setFishColours((old) => ({
+                                ...old,
+                                [a.id]: variant,
+                              }))
+                            }
+                            onBuy={() => buyAnimal(a.id)}
+                          />
                         ))
                     : decorations
                         .filter((d) => d.habitat === save.habitat)

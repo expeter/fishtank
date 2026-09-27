@@ -1,3 +1,4 @@
+import { fishVariants, getFishVariant } from "./fishVariants";
 import { toyDecorations } from "./toys";
 import type { FoodKind } from "./feeding";
 export const FOOD_PRICES: Readonly<Record<FoodKind, number>> = {
@@ -16,7 +17,7 @@ export const slotSize = (id: number): WorldSize =>
 export const SAND_BINS = 48;
 export const MAX_SAND_HEIGHT = 0.22;
 export const ANIMAL_CAPACITY = 24;
-export const VERSION = "1.0.4";
+export const VERSION = "1.0.5";
 export const tiers = [0, 150, 600, 1800, 6000, 20000, 60000],
   prices = [20, 60, 180, 500, 2000, 8000, 24000],
   growth = [600, 1800, 7200, 14400, 14400, 21600, 43200];
@@ -168,6 +169,8 @@ export interface Fish {
   };
   id: string;
   species: string;
+  /** Absent on older fish: keep their original appearance. */
+  variant?: string;
   name: string;
   born: number;
   grown: number;
@@ -261,6 +264,7 @@ export function makeFish(
   return {
     id: uid(),
     species,
+    variant: fishVariants[species]?.[0]?.id,
     name: "",
     born: now,
     grown: adult ? growth[s.tier] : 0,
@@ -402,10 +406,12 @@ export function buyFish(
   species: string,
   adult = false,
   now = Date.now(),
+  variant = fishVariants[species]?.[0]?.id,
 ): Save {
   const animal = animals.find((a) => a.id === species);
   if (
     !animal ||
+    !getFishVariant(species, variant) ||
     !canLiveIn(species, s.habitat) ||
     s.worlds[s.habitat].fish.length >= capacity(s) ||
     (s.mode === "progression" &&
@@ -414,9 +420,10 @@ export function buyFish(
     return s;
   const next = structuredClone(s);
   if (next.mode === "progression") next.coins -= prices[animal.tier];
-  next.worlds[next.habitat].fish.push(
-    makeFish(species, next.mode === "creative" && adult, now),
-  );
+  next.worlds[next.habitat].fish.push({
+    ...makeFish(species, next.mode === "creative" && adult, now),
+    variant,
+  });
   return next;
 }
 export function breed(s: Save, now = Date.now(), random = Math.random): Save {
@@ -554,6 +561,9 @@ export function validSave(s: unknown): s is Save {
             f &&
             typeof f.id === "string" &&
             typeof f.name === "string" &&
+            (f.variant === undefined ||
+              (typeof f.variant === "string" &&
+                !!getFishVariant(f.species, f.variant))) &&
             (f.lastFedAt === undefined ||
               (finite(f.lastFedAt) && f.lastFedAt >= 0)) &&
             (f.parents === undefined ||

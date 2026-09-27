@@ -177,3 +177,9 @@ Validation for 1.0.3: 97 unit tests, production build and 70 unique browser scen
 World dimensions are captured on first opening and saved for both habitats. Rotation changes only the viewport: fish, decorations, terrain and their layout retain their size. A viewport wider than the world centers it without stretching. Explore supports dragging in both directions and four arrow buttons; keyboard arrows also pan. The camera preserves the visible center where world edges allow it. Decoration placement and editing account for vertical scrolling.
 
 Validation: 99 unit tests and 19 phone browser scenarios, including all three slots through portrait/landscape/portrait, reopening in landscape, both habitats, scrolling, placement after scrolling, and German/English button layouts. Rotation tests also gate Pages deployment.
+
+## Version 1.0.5: choose a fish's natural colours
+
+The shop has named, 44px colour swatches with a selection tick and a live fish preview. The chosen palette is saved with the purchased fish; behaviour seeds no longer change its colours. Guppies, goldfish, discus, seahorses and clownfish offer researched alternatives; other species have a conservative natural palette. Existing saved fish retain their original appearance. The phone shop accommodates the swatches in portrait and landscape, with English/German names and instructions in Help. [Research notes](docs/colour-sources.md) distinguish natural forms from ornamental breeding strains.
+
+Validation: 103 unit tests and 17 browser scenarios covering colour previews/purchases/persistence, bilingual phone layouts, and unchanged shop limits. Colour-selection browser tests now gate deployment.

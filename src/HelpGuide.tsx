@@ -190,8 +190,8 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
           icon: <ShoppingBag />,
           title: t("Little shop", "Kleiner Laden"),
           text: t(
-            "Find new animals and lovely things here. A small baby grows into a big friend.",
-            "Hier findest du neue Tiere und schöne Dinge. Ein kleines Baby wächst zu einem großen Freund heran.",
+            "Tap a colour circle to preview it, then tap the fish to buy. The tick marks your choice. Only natural colour palettes are offered; some species have just one.",
+            "Tippe auf einen Farbkreis für die Vorschau, dann auf den Fisch zum Kaufen. Der Haken zeigt deine Wahl. Es gibt nur natürliche Farben; manche Arten haben nur eine Auswahl.",
           ),
         },
       ],

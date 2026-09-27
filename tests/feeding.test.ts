@@ -111,8 +111,8 @@ describe("individual meals and appearances", () => {
         ),
       ).toBeNull();
   });
-  it("keeps coats and silhouettes stable across saves while giving individuals visible variety", () => {
-    const fish = { ...makeFish("guppy"), seed: 3 };
+  it("preserves legacy random coats and silhouettes across saves", () => {
+    const fish = { ...makeFish("guppy"), seed: 3, variant: undefined };
     expect(fishMarkings(fish)).toEqual(
       fishMarkings(JSON.parse(JSON.stringify(fish))),
     );
