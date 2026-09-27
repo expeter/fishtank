@@ -1,0 +1,107 @@
+.help-guide {
+  color: #264e4a;
+  min-width: 0;
+}
+.help-guide h2 {
+  font-size: 21px;
+  margin: 0 35px 7px 0;
+}
+.help-guide .help-intro {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0 0 12px;
+  color: #60766a;
+}
+.help-guide .help-chapter {
+  border: 1px solid #d6bd81;
+  border-radius: 12px;
+  margin: 8px 0;
+  overflow: hidden;
+  background: #fff7df;
+}
+.help-guide .help-chapter > summary {
+  cursor: pointer;
+  min-height: 48px;
+  padding: 10px 9px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  list-style-position: inside;
+}
+.help-guide .help-chapter > summary > span {
+  display: inline-flex;
+  vertical-align: middle;
+  margin: 0 6px 0 1px;
+}
+.help-guide .help-chapter > summary svg {
+  width: 18px;
+  height: 18px;
+}
+.help-guide .help-chapter[open] > summary {
+  background: #e5edc8;
+  border-bottom: 1px solid #d6bd81;
+}
+.help-guide .help-chapter ul {
+  list-style: none;
+  margin: 0;
+  padding: 3px 10px;
+}
+.help-guide .help-chapter li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid #e8d8b1;
+}
+.help-guide .help-chapter li:last-child {
+  border-bottom: 0;
+}
+.help-guide .help-picture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 37px;
+  height: 37px;
+  border-radius: 10px;
+  background: #f0dfb7;
+  color: #244b4c;
+}
+.help-guide .help-picture svg {
+  width: 29px;
+  height: 29px;
+}
+.help-guide .help-chapter li > div {
+  min-width: 0;
+}
+.help-guide .help-chapter strong {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.help-guide .help-chapter li p {
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 3px 0 0;
+  color: #536a60;
+  overflow-wrap: break-word;
+}
+.help-guide summary:focus-visible {
+  outline: 3px solid #347d77;
+  outline-offset: -3px;
+}
+@media (max-width: 350px) {
+  .help-guide .help-chapter > summary {
+    font-size: 12px;
+  }
+  .help-guide .help-chapter li {
+    gap: 8px;
+  }
+  .help-guide .help-picture {
+    width: 32px;
+    height: 32px;
+  }
+}
+/* Keep the short introduction clear of the touch-sized close button. */
+.help-guide .help-intro {
+  padding-right: 44px;
+}

@@ -1,0 +1,252 @@
+/* Landing-only colours: text must not inherit the pale lettering of the sea. */
+.app.landing {
+  color-scheme: light;
+  color: #fff4d8;
+}
+.app.landing .header .brand {
+  color: #fff4d8;
+}
+.app.landing .header .brand small,
+.app.landing .cozy,
+.app.landing .home > .eyebrow,
+.app.landing .intro,
+.app.landing .local-note,
+.app.landing footer {
+  color: #e0ede4;
+}
+.app.landing .header .brand-icon,
+.app.landing .header .icon-button {
+  color: #173846;
+  background: #fff4d8;
+}
+.app.landing .save-card {
+  min-width: 0;
+  color: #173846;
+  background: #fff8e7;
+  border: 2px solid #cbab72;
+}
+.app.landing .save-info {
+  min-width: 0;
+}
+.app.landing .save-info h2 {
+  color: #173846;
+  overflow-wrap: anywhere;
+}
+.app.landing .save-info p {
+  color: #3c555e;
+  font-size: 12px;
+}
+.app.landing .save-info .outline {
+  color: #173846;
+  background: #fffdf6;
+  border: 2px solid #5c7679;
+}
+.app.landing .save-info .primary {
+  color: #fffdf3;
+  background: #15534c;
+}
+.app.landing .delete-slot {
+  color: #173846;
+  opacity: 1;
+}
+.app.landing .slot-tag,
+.app.landing .mode-tag {
+  color: #173846;
+  background: #fff4d8;
+  border-radius: 6px;
+  padding: 5px 7px;
+}
+.app.landing .modal {
+  color: #173846;
+  background: #fff8e7;
+}
+.app.landing .modal p,
+.app.landing .modal small,
+.app.landing .modal .eyebrow {
+  color: #3c555e;
+}
+.app.landing .modal input,
+.app.landing .modal select {
+  color: #173846;
+  background: #fffdf6;
+}
+.app.landing .modal input::placeholder {
+  color: #51646b;
+  opacity: 1;
+}
+.app.landing .home {
+  margin-top: 30px;
+}
+.app.landing .welcome-install {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 44px;
+  align-items: start;
+  gap: 12px;
+  width: min(720px, 90%);
+  margin: 20px auto 0;
+  padding: 16px;
+  color: #173846;
+  background: #fff4d8;
+  border: 2px solid #d6b779;
+  border-radius: 18px;
+  box-shadow: 0 5px 0 #071e2e;
+  text-align: left;
+}
+.welcome-install-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 58px;
+  color: #15534c;
+  background: #cbe6d4;
+  border-radius: 12px;
+}
+.welcome-install-art > span {
+  position: absolute;
+  top: 17px;
+  font-weight: 800;
+  color: #15534c;
+}
+.welcome-install-copy {
+  min-width: 0;
+}
+.welcome-install-copy strong {
+  display: block;
+  color: #173846;
+  font-size: 16px;
+  line-height: 1.3;
+}
+.welcome-install-copy p {
+  color: #3c555e;
+  margin: 6px 0 10px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.welcome-install-copy small {
+  display: block;
+  color: #3c555e;
+  font-size: 11px;
+  margin-top: 7px;
+  line-height: 1.4;
+}
+.app.landing .welcome-install-action {
+  display: flex;
+  gap: 8px;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 13px;
+  color: #fffdf3;
+  background: #15534c;
+  border: 2px solid #123f3d;
+  border-radius: 10px;
+  white-space: normal;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+.app.landing .welcome-install-dismiss {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 10px;
+  color: #173846;
+  background: #eee0bd;
+}
+@media (max-width: 520px) {
+  .app.landing .header {
+    margin-inline: 4%;
+    gap: 8px;
+    height: 80px;
+  }
+  .app.landing .header .brand {
+    font-size: 20px;
+    gap: 7px;
+    min-width: 0;
+  }
+  .app.landing .header .brand small {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+  .app.landing .header-right {
+    gap: 6px;
+  }
+  .app.landing .welcome-install {
+    width: 92%;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    gap: 8px;
+    padding: 12px;
+  }
+  .welcome-install-art {
+    display: none;
+  }
+  .app.landing .home {
+    width: 92%;
+    margin-top: 30px;
+  }
+  .app.landing .home h1 {
+    font-size: clamp(32px, 9vw, 44px);
+  }
+  .app.landing .save-grid {
+    gap: 16px;
+  }
+  .app.landing .save-card {
+    grid-template-columns: minmax(70px, 26%) minmax(0, 1fr);
+  }
+  .app.landing .save-info {
+    padding: 16px 12px;
+  }
+  .app.landing .save-info h2 {
+    font-size: 20px;
+    line-height: 1.2;
+    padding-right: 14px;
+  }
+  .app.landing .save-info > button:not(.delete-slot) {
+    padding: 10px;
+    gap: 6px;
+    white-space: normal;
+  }
+  .app.landing .slot-tag {
+    left: 6px;
+    letter-spacing: 0.5px;
+    font-size: 8px;
+  }
+  .app.landing .intro {
+    font-size: 13px;
+  }
+  .app.landing .local-note {
+    font-size: 11px;
+  }
+}
+@media (forced-colors: active) {
+  .app.landing .welcome-install,
+  .app.landing .save-card {
+    border-color: CanvasText;
+  }
+  .app.landing .welcome-install-action,
+  .app.landing .welcome-install-dismiss {
+    border: 2px solid ButtonText;
+  }
+}
+/* Draw preview bubbles without depending on a phone's symbol font. */
+.app.landing .preview-bubbles {
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #eefaf1;
+  border-radius: 50%;
+}
+.app.landing .preview-bubbles::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 18px;
+  width: 5px;
+  height: 5px;
+  border: 2px solid #eefaf1;
+  border-radius: 50%;
+}

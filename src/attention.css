@@ -1,0 +1,325 @@
+/* One friend, one centered interaction card. */
+.playing .friend-overlay {
+  left: 50%;
+  right: auto;
+  width: min(380px, calc(100vw - 16px));
+  transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom) + 86px);
+}
+.playing .compact-friend {
+  max-height: min(58dvh, 410px);
+  gap: 5px 9px;
+}
+.fish-actions {
+  grid-column: 1/-1;
+}
+.fish-actions > small {
+  display: block;
+  font-size: 11px;
+  margin: 3px 0 6px;
+}
+.fish-game-buttons {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px !important;
+  width: 100%;
+}
+.fish-game-buttons button {
+  min-width: 0 !important;
+  min-height: 52px !important;
+  padding: 5px 2px !important;
+  border-radius: 10px;
+  background: #e2d2a9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  justify-content: center;
+}
+.fish-game-buttons button svg {
+  width: 22px;
+  height: 22px;
+}
+.fish-game-buttons button span {
+  position: static !important;
+  font-size: 9px !important;
+  line-height: 1.2;
+}
+.fish-game-buttons button[aria-pressed="true"] {
+  background: #8cd7b3;
+  box-shadow: inset 0 0 0 2px #3b7a61;
+}
+.fish-game-buttons button:disabled {
+  opacity: 0.4;
+}
+.attention-tools {
+  width: min(350px, calc(100vw - 16px));
+}
+.attention-tools .attention-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+.attention-heading button {
+  min-height: 32px;
+  min-width: 32px;
+  padding: 3px 6px;
+  background: none;
+  display: flex;
+  gap: 6px;
+  font-size: 13px;
+}
+.attention-heading button:first-child {
+  max-width: calc(100% - 38px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.attention-tools > small {
+  font-size: 11px;
+  margin: 4px 0 6px;
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .playing .friend-overlay {
+    left: 50%;
+    right: auto;
+    bottom: 8px;
+    top: 65px;
+    transform: translateX(-50%);
+    width: 340px;
+  }
+  .playing .compact-friend {
+    max-height: 100%;
+    overflow: auto;
+  }
+  .attention-tools {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+.playing .friend-overlay {
+  top: 50%;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+}
+.playing .compact-friend {
+  max-height: min(65dvh, 440px);
+}
+.fish-book {
+  grid-column: 1/-1;
+  font-size: 12px;
+  padding: 6px;
+  border-radius: 9px;
+  background: #d6e4ba;
+  min-height: 35px;
+  gap: 6px;
+}
+.food-tools,
+.clean-tools {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom) + 86px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(340px, calc(100vw - 16px));
+  padding: 7px;
+  background: #fff1cd;
+  border: 2px solid #ab7845;
+  border-radius: 16px;
+  z-index: 24;
+  text-align: center;
+}
+.food-tools > div {
+  display: flex;
+  gap: 4px;
+}
+.food-tools button {
+  flex: 1;
+  min-width: 0;
+  min-height: 47px;
+  padding: 4px;
+  border-radius: 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ecdcb4;
+}
+.food-tools button[aria-pressed="true"] {
+  background: #8cd7b3;
+  box-shadow: inset 0 0 0 2px #3b7a61;
+}
+.food-tools button svg {
+  height: 20px;
+  width: 20px;
+}
+.food-tools small {
+  font-size: 10px;
+}
+.playing:has(.food-tools) .tank-tools {
+  bottom: calc(env(safe-area-inset-bottom) + 174px);
+}
+.species-knowledge dl {
+  margin: 10px 0;
+  background: #eff0d1;
+  padding: 10px;
+  border-radius: 12px;
+}
+.species-knowledge dt {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 6px 0 2px;
+}
+.species-knowledge dd {
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.5;
+}
+.species-knowledge details {
+  border-bottom: 1px solid #d9bd85;
+  padding: 9px 0;
+}
+.species-knowledge summary {
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+  min-height: 30px;
+}
+.species-knowledge p,
+.species-knowledge li {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.guide-habitats {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+.guide-habitats button {
+  font-size: 11px;
+  padding: 7px;
+  border-radius: 9px;
+  background: #d6e4ba;
+}
+.guide-habitats button[aria-pressed="true"] {
+  background: #8cd7b3;
+}
+.postcard-message textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 60px;
+  font: inherit;
+  padding: 8px;
+  border-radius: 10px;
+}
+.postcard-message small {
+  display: block;
+  text-align: right;
+}
+.tank-equipment {
+  display: flex;
+  gap: 5px;
+  margin: 6px 0;
+}
+.tank-equipment button {
+  font-size: 11px;
+  min-height: 40px;
+  gap: 4px;
+  background: #d5e9c4;
+  border-radius: 9px;
+  padding: 6px;
+}
+.tank-equipment svg {
+  width: 17px;
+  height: 17px;
+}
+.clean-tools {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+}
+.clean-tools button {
+  min-height: 40px;
+  padding: 7px;
+  background: #8cd7b3;
+  border-radius: 9px;
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .playing .friend-overlay {
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+  }
+  .playing .compact-friend {
+    max-height: calc(100dvh - 120px);
+  }
+}
+.species-scientific {
+  font-style: italic;
+  font-size: 12px !important;
+}
+.playing .postcard-modal {
+  position: relative;
+  width: min(480px, 100%);
+  max-height: calc(100dvh - 24px);
+  padding: 14px;
+  overflow: auto;
+}
+.playing .postcard-modal .close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+.playing .postcard-modal h2 {
+  font-size: 20px;
+  margin: 0 34px 8px 0;
+}
+.playing .postcard-modal img {
+  width: 100%;
+  height: min(32dvh, 290px);
+  object-fit: contain;
+  margin: 8px 0;
+  border-radius: 10px;
+  background: #143c4b;
+}
+.playing .postcard-modal > p {
+  font-size: 11px;
+  line-height: 1.4;
+  margin: 6px 0;
+}
+.playing .postcard-modal .postcard-message {
+  font-size: 12px;
+  display: block;
+}
+.playing .postcard-modal textarea {
+  margin-top: 4px;
+  font-size: 14px;
+  padding: 7px;
+}
+.playing .postcard-modal .modal-actions {
+  position: sticky;
+  bottom: -14px;
+  background: #fff1cd;
+  padding: 8px 0 0;
+  display: flex;
+  gap: 6px;
+}
+.playing .postcard-modal .modal-actions button {
+  min-height: 42px;
+  font-size: 12px;
+  padding: 7px;
+  flex: 1;
+}
+@media (max-height: 500px) {
+  .playing .postcard-modal > p {
+    display: none;
+  }
+  .playing .postcard-modal img {
+    height: 22dvh;
+  }
+  .playing .postcard-modal textarea {
+    min-height: 44px;
+    height: 44px;
+  }
+}

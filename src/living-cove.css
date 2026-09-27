@@ -1,0 +1,440 @@
+/* Living Cove: small toy-like controls, open water, and a friend to discover it with. */
+.playing .panel-overlay,
+.playing .friend-overlay {
+  position: fixed;
+  inset: auto 8px calc(env(safe-area-inset-bottom) + 88px);
+  display: block;
+  padding: 0;
+  z-index: 31;
+  background: none;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+.playing .panel-overlay .modal,
+.playing .friend-overlay .modal {
+  pointer-events: auto;
+  margin: 0 auto;
+  width: min(450px, 100%);
+  max-height: min(50dvh, 360px);
+  border: 2px solid #935d39;
+  border-radius: 22px;
+  padding: 12px;
+  background: linear-gradient(150deg, #fff6d9, #ffe9b8);
+  box-shadow:
+    0 5px 0 #093d4666,
+    0 12px 30px #082f4140;
+}
+.playing .panel-overlay .modal h2 {
+  font-size: 17px;
+  margin: 0 34px 8px 2px;
+  line-height: 1.25;
+}
+.playing .panel-overlay .close,
+.playing .friend-overlay .close {
+  width: 30px;
+  height: 30px;
+  top: 7px;
+  right: 7px;
+  z-index: 4;
+  box-shadow: none;
+  background: #ebc68b;
+}
+.playing .panel-shop .shop-modal {
+  max-height: 260px;
+  overflow: hidden;
+  padding: 10px 10px 7px;
+}
+.playing .panel-shop .shop-wallet {
+  display: inline-block;
+  position: static;
+  font-size: 11px;
+  padding: 3px 8px;
+  margin: 0 0 5px;
+  border: 0;
+  border-radius: 8px;
+  background: #ffce6c;
+}
+.playing .panel-shop .discovery-progress {
+  position: absolute;
+  right: 45px;
+  top: 37px;
+  width: 125px;
+  max-width: 36%;
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+.playing .panel-shop .discovery-progress small {
+  font-size: 8px;
+  white-space: nowrap;
+}
+.playing .panel-shop .segmented {
+  margin: 0 0 5px;
+  display: flex;
+  justify-content: flex-start;
+  width: max-content;
+  padding: 2px;
+  background: #dac393;
+}
+.playing .panel-shop .segmented button {
+  min-height: 28px;
+  padding: 4px 9px;
+  font-size: 10px;
+  gap: 4px;
+}
+.playing .panel-shop .segmented svg {
+  width: 15px;
+  height: 15px;
+}
+.playing .panel-shop .catalog {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: none;
+  grid-template-rows: 108px;
+  grid-auto-columns: 91px;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  padding: 2px 2px 7px;
+  scrollbar-width: thin;
+  scrollbar-color: #c59b5a #f0ddb3;
+}
+.playing .panel-shop .catalog > button {
+  scroll-snap-align: start;
+  min-height: 100px;
+  padding: 3px;
+  box-shadow: 0 2px #cbab73;
+  border-color: #d7b66e;
+  border-radius: 16px 16px 12px 12px;
+}
+.playing .panel-shop .catalog-art {
+  flex-basis: 49px;
+  height: 49px;
+}
+.playing .panel-shop .catalog strong {
+  font-size: 10px;
+}
+.playing .panel-shop .catalog small {
+  font-size: 10px;
+}
+.playing .panel-shop .check-label {
+  font-size: 9px;
+  margin: 1px 0 4px;
+  min-height: 16px;
+  gap: 5px;
+}
+.playing .panel-shop .check-label input {
+  width: 12px;
+  height: 12px;
+}
+.playing .panel-menu {
+  inset: calc(env(safe-area-inset-top) + 61px) 9px auto auto;
+  width: min(280px, calc(100% - 18px));
+}
+.playing .panel-menu .modal {
+  max-height: calc(100dvh - 165px);
+}
+.playing .panel-menu .menu-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+.playing .panel-menu .menu-list > button {
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  justify-content: center;
+  font-size: 10px;
+  padding: 6px;
+  background: #ffefc9;
+  border-color: #d9bb80;
+}
+.playing .panel-menu .menu-list > button svg {
+  width: 20px;
+  height: 20px;
+}
+.playing .panel-menu .world-size {
+  grid-column: 1/-1;
+  font-size: 11px;
+  padding: 3px;
+}
+.playing .panel-menu .world-size select {
+  padding: 4px;
+  font-size: 11px;
+}
+.playing .panel-residents .menu-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+.playing .panel-residents .menu-list button {
+  min-height: 45px;
+  font-size: 11px;
+  gap: 5px;
+  overflow: hidden;
+}
+.playing .panel-residents .menu-list small {
+  font-size: 9px;
+}
+.playing .compact-friend {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  gap: 4px 9px;
+  max-height: 238px;
+  padding: 11px;
+  overflow: auto;
+}
+.playing .compact-friend .individual-portrait {
+  grid-column: 1;
+  grid-row: 1/3;
+  width: 50px;
+  height: 50px;
+  margin: 3px 0;
+  background: #bce6d1;
+  border: 2px solid #f4d497;
+  border-radius: 16px;
+}
+.playing .compact-friend h2 {
+  grid-column: 2;
+  font-size: 14px;
+  text-align: left;
+  margin: 0 29px 1px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.playing .compact-friend > label {
+  grid-column: 2;
+  font-size: 0;
+  line-height: 1;
+  margin: 0 26px 0 0;
+}
+.playing .compact-friend input {
+  min-width: 0;
+  width: 100%;
+  font-size: 13px;
+  padding: 8px;
+  margin: 0;
+  border-radius: 10px;
+  background: #fffdfa;
+  border: 1px solid #c5a475;
+}
+.playing .compact-friend .fish-stats {
+  grid-column: 1/-1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 5px 0;
+  gap: 5px;
+}
+.playing .compact-friend .fish-stats span {
+  font-size: 8px;
+  color: #536864;
+}
+.playing .compact-friend .fish-stats strong {
+  font-size: 10px;
+  line-height: 1.3;
+}
+.playing .compact-friend .born-here {
+  grid-column: 1/-1;
+  margin: 0;
+  font-size: 9px;
+}
+.playing .compact-friend .growth-label {
+  grid-column: 1/-1;
+  font-size: 9px;
+  margin: 0;
+}
+.playing .compact-friend > progress {
+  grid-column: 1/-1;
+  height: 5px;
+  margin: 0 0 5px;
+}
+.playing .compact-friend > .wide {
+  grid-column: 1/-1;
+  min-height: 31px;
+  padding: 5px;
+  font-size: 11px;
+  background: #e3efc3;
+  border: 1px solid #aac07c;
+}
+.playing .panel-decorate .modal {
+  max-height: 290px;
+}
+.playing .panel-settings .modal {
+  max-height: 330px;
+}
+.playing .panel-guide .modal {
+  max-height: min(58dvh, 440px);
+}
+.playing .panel-help .modal {
+  max-height: 300px;
+}
+.pip-companion {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom) + 91px);
+  left: 8px;
+  z-index: 25;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  pointer-events: none;
+}
+.pip-button {
+  width: 52px;
+  height: 58px;
+  flex-shrink: 0;
+  pointer-events: auto;
+  padding: 0;
+  filter: drop-shadow(0 3px 0 #09334466);
+  transform-origin: bottom;
+}
+.pip-face {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.pip-speech {
+  width: min(244px, calc(100vw - 124px));
+  padding: 11px 12px 9px;
+  margin-bottom: 8px;
+  border-radius: 19px 19px 19px 4px;
+  background: #fff7dc;
+  color: #314e4d;
+  border: 2px solid #c29359;
+  box-shadow: 0 4px #082c3f44;
+  pointer-events: auto;
+  position: relative;
+  animation: sheet-in 0.2s ease-out;
+}
+.pip-speech strong {
+  display: block;
+  font-size: 12px;
+  padding-right: 14px;
+}
+.pip-speech p {
+  margin: 5px 0 7px;
+  line-height: 1.4;
+  font-size: 11px;
+  color: #506761;
+}
+.pip-speech .pip-action {
+  min-height: 30px;
+  border-radius: 9px;
+  background: #9fdbb1;
+  padding: 6px 9px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.pip-dismiss {
+  position: absolute;
+  right: 5px;
+  top: 4px;
+  font-size: 22px;
+  line-height: 24px;
+}
+.world-recovery {
+  margin: 12px auto;
+  max-width: 460px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 15px;
+  background: #fff1d1;
+  color: #204c4b;
+  border: 2px solid #bc8d4d;
+  border-radius: 22px;
+  box-shadow: 0 6px 0 #071f2b;
+}
+.world-recovery > .pip-face {
+  width: 60px;
+  height: 70px;
+  flex-shrink: 0;
+}
+.world-recovery p {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 6px 0;
+  color: #506864;
+}
+.world-recovery small {
+  font-size: 10px;
+}
+.world-recovery button {
+  margin: 8px 7px 0 0;
+  padding: 9px 14px;
+  border-radius: 11px;
+  font-size: 12px;
+}
+.weather-badge {
+  position: fixed;
+  right: 12px;
+  top: calc(env(safe-area-inset-top) + 65px);
+  z-index: 18;
+  background: #0b354a9e;
+  color: #fff1cc;
+  padding: 5px 8px;
+  border-radius: 12px;
+  font-size: 9px;
+  pointer-events: none;
+}
+.nature-switch {
+  padding: 9px;
+  border: 1px solid #cbb57c;
+  border-radius: 12px;
+  margin: 9px 0;
+  background: #fbebc4;
+}
+.nature-switch p {
+  font-size: 11px;
+  line-height: 1.4;
+  margin: 5px 0 0;
+}
+.nature-switch button {
+  font-size: 12px;
+}
+@keyframes pip-breathe {
+  0%,
+  100% {
+    transform: rotate(-3deg) scaleY(0.98);
+  }
+  50% {
+    transform: rotate(2deg) scaleY(1.02);
+  }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .playing .panel-overlay,
+  .playing .friend-overlay {
+    inset: 65px 8px 8px auto;
+    width: 290px;
+  }
+  .playing .panel-overlay .modal,
+  .playing .friend-overlay .modal {
+    max-height: 100%;
+    overflow: auto;
+  }
+  .playing .panel-menu {
+    inset: 60px 8px auto auto;
+    width: 280px;
+  }
+  .pip-companion {
+    bottom: 80px;
+    left: 8px;
+  }
+  .pip-speech {
+    width: 240px;
+  }
+}
+
+.weather-badge,
+.pip-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pip-button .pip-face {
+  transform-origin: bottom;
+  animation: pip-breathe 3s ease-in-out infinite;
+}

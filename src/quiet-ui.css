@@ -1,0 +1,101 @@
+/* One bottom dock, one temporary choices row, open water above it. */
+.playing .toolbar {
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 8px);
+  transform: translateX(-50%);
+  width: min(310px, calc(100vw - 16px));
+  box-sizing: border-box;
+  gap: 5px;
+  padding: 6px;
+}
+.playing .toolbar > button {
+  flex: 1;
+  min-width: 44px;
+  width: auto;
+  height: 48px;
+}
+.playing .toolbar > button.selected {
+  transform: none;
+}
+.playing .food-tools,
+.playing .attention-tools,
+.playing .clean-tools,
+.playing .tool-status,
+.playing .pan-controls {
+  left: 50%;
+  right: auto;
+  bottom: calc(env(safe-area-inset-bottom) + 76px);
+  transform: translateX(-50%);
+  width: min(310px, calc(100vw - 16px));
+  box-sizing: border-box;
+  margin: 0;
+}
+.playing .food-tools {
+  padding: 5px;
+}
+.playing .food-tools button {
+  min-height: 48px;
+}
+.playing .food-tools small {
+  font-size: 9px;
+}
+.playing .attention-tools > small {
+  margin: 2px;
+}
+.playing .tank-tools {
+  bottom: calc(env(safe-area-inset-bottom) + 84px);
+}
+.playing:has(.food-tools) .tank-tools,
+.playing:has(.clean-tools) .tank-tools,
+.playing:has(.pan-controls) .tank-tools,
+.playing:has(.panel-overlay) .tank-tools,
+.playing:has(.friend-overlay) .tank-tools {
+  display: none;
+}
+.playing .tool-status {
+  padding: 5px;
+  gap: 4px;
+}
+.playing .tool-status button {
+  flex: 1;
+  padding: 6px 3px;
+  font-size: 10px;
+}
+.playing .decor-controls {
+  bottom: calc(env(safe-area-inset-bottom) + 133px);
+}
+.playing .pan-controls {
+  justify-content: space-between;
+  padding: 4px;
+}
+.playing .pan-controls button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.playing .pan-controls span {
+  font-size: 11px;
+}
+/* Ambient captions do not compete with the animals or the requested controls. */
+.playing .tank-caption,
+.playing .tank-label,
+.playing .habitat-tabs > span {
+  display: none;
+}
+.playing:has(.panel-overlay) .food-tools,
+.playing:has(.friend-overlay) .food-tools,
+.playing:has(.panel-overlay) .pan-controls,
+.playing:has(.friend-overlay) .pan-controls {
+  display: none;
+}
+@media (max-width: 600px) {
+  .playing .weather-badge {
+    pointer-events: none;
+  }
+  .playing .weather-badge span {
+    display: none;
+  }
+  .playing .toast {
+    top: calc(env(safe-area-inset-top) + 108px);
+    bottom: auto;
+  }
+}

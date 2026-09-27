@@ -1,0 +1,182 @@
+/* A steady icon dock and one contextual tray at a time. */
+.playing .toolbar {
+  gap: 7px;
+  padding: 7px;
+}
+.playing .toolbar > button {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.playing .toolbar > button > span:not(.tool-icon),
+.playing .toolbar > button > svg {
+  display: none;
+}
+.playing .toolbar .tool-icon {
+  width: 29px;
+  height: 29px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.playing .toolbar .tool-icon svg {
+  width: 27px;
+  height: 27px;
+}
+.play-tools {
+  position: fixed;
+  z-index: 24;
+  bottom: calc(env(safe-area-inset-bottom) + 86px);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 16px);
+  padding: 7px;
+  border: 2px solid #ab7845;
+  border-radius: 17px;
+  background: #fff1cd;
+  color: #264f4c;
+}
+.play-tools > small {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  margin: 0 0 5px;
+}
+.play-tools > div {
+  display: flex;
+  gap: 3px;
+}
+.play-tools button {
+  min-width: 43px;
+  min-height: 43px;
+  padding: 7px;
+  border-radius: 11px;
+  background: #e6d09c;
+}
+.play-tools button svg {
+  width: 22px;
+  height: 22px;
+}
+.play-tools button:last-child {
+  position: relative;
+}
+.play-tools button:last-child span {
+  position: absolute;
+  right: 3px;
+  bottom: 1px;
+  font-size: 10px;
+}
+.playing:has(.play-tools) .tank-tools,
+.playing:has(.decor-controls) .tank-tools,
+.playing:has(.tool-status) .tank-tools {
+  display: none;
+}
+.playing .tool-status {
+  left: 8px;
+  right: 8px;
+  bottom: calc(env(safe-area-inset-bottom) + 84px);
+  justify-content: center;
+}
+.playing .tool-status button {
+  min-height: 43px;
+}
+.playing .decor-controls {
+  left: 8px;
+  right: 8px;
+  bottom: calc(env(safe-area-inset-bottom) + 144px);
+  max-height: 175px;
+  overflow: auto;
+  padding: 8px;
+}
+.playing .decor-controls button {
+  min-height: 40px;
+  padding: 8px;
+}
+.playing .decor-controls input {
+  min-height: 36px;
+}
+.playing .compact-friend {
+  max-height: 285px;
+}
+.playing .compact-friend .playmate-toggle,
+.playing .compact-friend .trick-memory {
+  grid-column: 1/-1;
+}
+.playmate-toggle {
+  min-height: 38px;
+  font-size: 12px;
+  border-radius: 9px;
+  background: #e2ebba;
+  gap: 6px;
+}
+.playmate-toggle[aria-pressed="true"] {
+  background: #92d7b0;
+  box-shadow: inset 0 0 0 2px #377b5f;
+}
+.trick-memory {
+  font-size: 11px;
+}
+.playing .panel-decorate .modal {
+  max-height: 285px;
+}
+.playing .panel-decorate .eyebrow {
+  display: none;
+}
+.playing .panel-decorate h3 {
+  font-size: 12px;
+  margin: 8px 0 4px;
+}
+.playing .panel-decorate .swatches {
+  gap: 4px;
+  margin: 0;
+}
+.playing .panel-decorate .swatches button {
+  padding: 6px;
+  font-size: 10px;
+  min-height: 40px;
+}
+.playing .panel-decorate .modal-actions button {
+  min-height: 40px;
+  font-size: 11px;
+  padding: 7px;
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .play-tools {
+    left: 9px;
+    transform: none;
+    bottom: 86px;
+  }
+  .playing .decor-controls {
+    left: auto;
+    right: 8px;
+    bottom: 84px;
+    width: 280px;
+    max-height: 180px;
+  }
+  .playing .tool-status {
+    left: 8px;
+    right: auto;
+    max-width: calc(100vw - 310px);
+  }
+}
+/* Keep the selected floor item visible and draggable below its edit controls. */
+.playing .decor-controls {
+  top: calc(env(safe-area-inset-top) + 116px);
+  bottom: auto;
+  max-height: 125px;
+}
+.playing:has(.decor-controls) .birth-banner {
+  display: none;
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .playing .decor-controls {
+    top: 65px;
+    bottom: auto;
+    max-height: 180px;
+  }
+}
