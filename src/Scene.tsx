@@ -1192,9 +1192,19 @@ export function drawDecor(
   c.restore();
 }
 export default function Scene(p: Props) {
+  const worldSize = p.save.worlds[p.save.habitat].viewSize;
+  const worldRatio = { small: 1, medium: 1.6, large: 2.4 }[
+    p.save.worlds[p.save.habitat].size ?? "small"
+  ];
   const latest = useRef(p);
   latest.current = p;
-  const pan = useRef<{ x: number; left: number; moved: boolean } | null>(null);
+  const pan = useRef<{
+    x: number;
+    y: number;
+    left: number;
+    top: number;
+    moved: boolean;
+  } | null>(null);
   const positions = useRef<Record<string, { x: number; y: number }>>({});
   const pendingFishClick = useRef<string | null>(null);
   const feedFishTap = useRef<string | null>(null);
@@ -1236,17 +1246,59 @@ export default function Scene(p: Props) {
       center: {
         x:
           canvas && viewport
-            ? (viewport.scrollLeft + viewport.clientWidth / 2) /
+            ? (viewport.scrollLeft +
+                Math.min(viewport.clientWidth, canvas.clientWidth) / 2) /
               canvas.clientWidth
             : 0.5,
-        y: 0.58,
+        y:
+          canvas && viewport
+            ? (viewport.scrollTop +
+                Math.min(viewport.clientHeight, canvas.clientHeight) * 0.58) /
+              canvas.clientHeight
+            : 0.58,
       },
     };
   }, [p.playCommand?.nonce]);
   useEffect(() => {
     const viewport = p.canvasRef.current?.parentElement;
-    if (viewport) viewport.scrollLeft = 0;
+    if (viewport) {
+      viewport.scrollLeft = 0;
+      viewport.scrollTop = 0;
+    }
   }, [p.save.id, p.save.habitat, p.save.worlds[p.save.habitat].size]);
+  useEffect(() => {
+    const canvas = p.canvasRef.current;
+    const viewport = canvas?.parentElement;
+    if (!canvas || !viewport) return;
+    let width = viewport.clientWidth,
+      height = viewport.clientHeight;
+    let center = {
+      x: viewport.scrollLeft + Math.min(width, canvas.clientWidth) / 2,
+      y: viewport.scrollTop + Math.min(height, canvas.clientHeight) / 2,
+    };
+    const remember = () => {
+      // A resize may clamp scroll offsets before its observer runs.
+      if (width !== viewport.clientWidth || height !== viewport.clientHeight)
+        return;
+      center = {
+        x: viewport.scrollLeft + Math.min(width, canvas.clientWidth) / 2,
+        y: viewport.scrollTop + Math.min(height, canvas.clientHeight) / 2,
+      };
+    };
+    const observer = new ResizeObserver(() => {
+      width = viewport.clientWidth;
+      height = viewport.clientHeight;
+      viewport.scrollLeft = center.x - Math.min(width, canvas.clientWidth) / 2;
+      viewport.scrollTop = center.y - Math.min(height, canvas.clientHeight) / 2;
+      remember();
+    });
+    observer.observe(viewport);
+    viewport.addEventListener("scroll", remember);
+    return () => {
+      observer.disconnect();
+      viewport.removeEventListener("scroll", remember);
+    };
+  }, [p.save.id, p.save.habitat, worldSize?.width, worldSize?.height]);
   useEffect(() => {
     cleanedGlass.current = {};
     cleanedLitter.current = {};
@@ -1551,14 +1603,17 @@ export default function Scene(p: Props) {
             : Math.min(1, Math.max(0.1, (Date.now() - f.born) / 700))) *
           Math.min(
             1.2,
-            canvas.parentElement!.clientWidth / 600 + 0.45,
+            (latest.current.save.worlds[latest.current.save.habitat].viewSize
+              ?.width ?? canvas.parentElement!.clientWidth) /
+              600 +
+              0.45,
             h / 230,
           );
         const pos = positions.current[f.id] ?? {
           x:
             Date.now() - f.born < 1500
               ? canvas.parentElement!.scrollLeft +
-                canvas.parentElement!.clientWidth / 2
+                Math.min(canvas.parentElement!.clientWidth, w) / 2
               : f.x * w,
           y:
             f.species === "frog"
@@ -2102,7 +2157,10 @@ export default function Scene(p: Props) {
               (0.48 + progress(f) * 0.65) *
               Math.min(
                 1.2,
-                canvas.parentElement!.clientWidth / 600 + 0.45,
+                (latest.current.save.worlds[latest.current.save.habitat]
+                  .viewSize?.width ?? canvas.parentElement!.clientWidth) /
+                  600 +
+                  0.45,
                 canvas.clientHeight / 230,
               ),
           )
@@ -2189,15 +2247,23 @@ export default function Scene(p: Props) {
     <canvas
       ref={p.canvasRef}
       style={{
-        width: `${{ small: 1, medium: 1.6, large: 2.4 }[p.save.worlds[p.save.habitat].size ?? "small"] * 100}%`,
+        width: worldSize
+          ? `${worldSize.width * worldRatio}px`
+          : `${worldRatio * 100}%`,
+        height: worldSize ? `${worldSize.height}px` : "100%",
         touchAction: "none",
       }}
       tabIndex={0}
       onKeyDown={(e) => {
-        if (["ArrowLeft", "ArrowRight"].includes(e.key)) {
+        if (
+          ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)
+        ) {
           e.preventDefault();
-          e.currentTarget.parentElement!.scrollLeft +=
-            e.key === "ArrowRight" ? 100 : -100;
+          e.currentTarget.parentElement!.scrollBy({
+            left:
+              e.key === "ArrowRight" ? 100 : e.key === "ArrowLeft" ? -100 : 0,
+            top: e.key === "ArrowDown" ? 100 : e.key === "ArrowUp" ? -100 : 0,
+          });
         }
       }}
       aria-label={p.label}
@@ -2255,6 +2321,8 @@ export default function Scene(p: Props) {
         if (p.tool === "explore") {
           pan.current = {
             x: e.clientX,
+            y: e.clientY,
+            top: e.currentTarget.parentElement!.scrollTop,
             left: e.currentTarget.parentElement!.scrollLeft,
             moved: false,
           };
@@ -2336,7 +2404,9 @@ export default function Scene(p: Props) {
         }
         if (pan.current) {
           const distance = e.clientX - pan.current.x;
-          pan.current.moved ||= Math.abs(distance) > 5;
+          const vertical = e.clientY - pan.current.y;
+          pan.current.moved ||= Math.hypot(distance, vertical) > 5;
+          e.currentTarget.parentElement!.scrollTop = pan.current.top - vertical;
           e.currentTarget.parentElement!.scrollLeft =
             pan.current.left - distance;
           return;

@@ -171,3 +171,9 @@ Action labels stay on one line without splitting words. Shorter visible labels r
 `tests/button-labels.spec.ts` checks English and German at 320×568, 393×851 and 851×393 across startup, creation, food, menus, settings, shop tabs, decorating, residents, fish actions and book chapters. DOM Range measurements detect wrapped action labels, split words, and clipped/overflowing text. Explanatory mode-card paragraphs may wrap normally. GitHub Pages deployment now requires these browser checks plus the one-row-control checks to pass; failures retain screenshots and error details.
 
 Validation for 1.0.3: 97 unit tests, production build and 70 unique browser scenarios verified across the full run and focused reruns. The new labels were visually reviewed in English/German portrait and landscape screenshots.
+
+## Version 1.0.4: stable worlds when rotating a phone
+
+World dimensions are captured on first opening and saved for both habitats. Rotation changes only the viewport: fish, decorations, terrain and their layout retain their size. A viewport wider than the world centers it without stretching. Explore supports dragging in both directions and four arrow buttons; keyboard arrows also pan. The camera preserves the visible center where world edges allow it. Decoration placement and editing account for vertical scrolling.
+
+Validation: 99 unit tests and 19 phone browser scenarios, including all three slots through portrait/landscape/portrait, reopening in landscape, both habitats, scrolling, placement after scrolling, and German/English button layouts. Rotation tests also gate Pages deployment.

@@ -67,3 +67,18 @@ describe("gentle aquarium simulation", () => {
     expect(validSave(createSave(0, "Test", "creative"))).toBe(true);
   });
 });
+
+it("preserves fixed world dimensions and rejects unsafe canvas sizes", () => {
+  const save = createSave(0, "Rotation", "creative");
+  expect(validSave(save)).toBe(true); // Pre-update saves remain supported.
+  save.worlds.aquarium.viewSize = { width: 393, height: 775 };
+  expect(validSave(save)).toBe(true);
+  expect(advance(save, Date.now()).worlds.aquarium.viewSize).toEqual({
+    width: 393,
+    height: 775,
+  });
+  for (const bad of [NaN, Infinity, -1, 0, 100000]) {
+    save.worlds.aquarium.viewSize.width = bad;
+    expect(validSave(save)).toBe(false);
+  }
+});

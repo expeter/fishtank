@@ -61,7 +61,7 @@ h3 {
   border-radius: 0;
   box-shadow: none;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
   scrollbar-width: none;
   overscroll-behavior: contain;
 }
@@ -69,6 +69,7 @@ h3 {
   display: none;
 }
 .playing .tank canvas {
+  margin-inline: auto;
   display: block;
   max-width: none;
   height: 100%;

@@ -42,6 +42,8 @@ export function fitDecoration(
   height: number,
   left = 0,
   visibleWidth = width,
+  top = 0,
+  visibleHeight = height,
 ): Pick<Decoration, "x" | "y"> {
   const angle = ((d.rotation ?? 0) * Math.PI) / 180;
   const corners = [
@@ -76,8 +78,8 @@ export function fitDecoration(
     y:
       bound(
         d.y * height,
-        height * 0.22,
-        height,
+        Math.max(height * 0.22, top),
+        Math.min(height, top + visibleHeight),
         Math.min(...corners.map((c) => c.y)),
         Math.max(...corners.map((c) => c.y)),
       ) / height,

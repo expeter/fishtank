@@ -16,7 +16,7 @@ export const slotSize = (id: number): WorldSize =>
 export const SAND_BINS = 48;
 export const MAX_SAND_HEIGHT = 0.22;
 export const ANIMAL_CAPACITY = 24;
-export const VERSION = "1.0.3";
+export const VERSION = "1.0.4";
 export const tiers = [0, 150, 600, 1800, 6000, 20000, 60000],
   prices = [20, 60, 180, 500, 2000, 8000, 24000],
   growth = [600, 1800, 7200, 14400, 14400, 21600, 43200];
@@ -195,6 +195,8 @@ export interface Decoration {
   layer: number;
 }
 export interface World {
+  /** Fixed CSS-pixel dimensions, captured once and retained across screen changes. */
+  viewSize?: { width: number; height: number };
   cleanup?: { glass: number[]; litter: number[] };
   pumpOn?: boolean;
   fish: Fish[];
@@ -520,6 +522,11 @@ export function validSave(s: unknown): s is Save {
       const w = v.worlds[h as Habitat];
       return (
         !!w &&
+        (w.viewSize === undefined ||
+          (!!w.viewSize &&
+            [w.viewSize.width, w.viewSize.height].every(
+              (n) => finite(n) && n >= 240 && n <= 2560,
+            ))) &&
         (w.cleanup === undefined ||
           (!!w.cleanup &&
             [w.cleanup.glass, w.cleanup.litter].every(

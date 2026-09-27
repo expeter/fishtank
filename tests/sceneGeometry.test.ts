@@ -87,3 +87,27 @@ it("keeps a tall flipped-over toy reachable inside the current viewport", () => 
   expect(fitted.y).toBeLessThan(d.y);
   expect(fitted.y * 740 + 115 * 3).toBeLessThanOrEqual(732);
 });
+
+it("fits an edited decoration within a vertically scrolled viewport", () => {
+  const d: Decoration = {
+    id: "plant",
+    kind: "d0",
+    x: 0.5,
+    y: 0.9,
+    scale: 1,
+    flip: false,
+    layer: 0,
+  };
+  const result = fitDecoration(d, 393, 775, 0, 393, 200, 317);
+  expect(result.y * 775 + 10).toBeLessThanOrEqual(509.001);
+  expect(result.y * 775 - 115).toBeGreaterThanOrEqual(208);
+  expect(
+    pickDecoration(
+      [{ ...d, ...result }],
+      result.x,
+      result.y - 40 / 775,
+      393,
+      775,
+    )?.id,
+  ).toBe("plant");
+});

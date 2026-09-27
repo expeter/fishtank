@@ -26,8 +26,8 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npx playwright install --with-deps chromium
-      - name: Check bilingual phone labels and controls
-        run: npm run test:e2e -- tests/button-labels.spec.ts tests/quiet-ui.spec.ts --workers=1
+      - name: Check phone labels, controls and rotation
+        run: npm run test:e2e -- tests/button-labels.spec.ts tests/quiet-ui.spec.ts tests/rotation.spec.ts --workers=1
         env:
           FT_PRODUCTION: "1"
       - name: Keep browser failure details

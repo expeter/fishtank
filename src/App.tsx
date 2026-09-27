@@ -23,7 +23,14 @@ import {
 } from "./decorating";
 import { fishColor } from "./appearance";
 import { newBirths, type BirthNotice } from "./births";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Shovel,
   Eraser,
@@ -44,6 +51,9 @@ import {
   X,
   Plus,
   ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ArrowDown,
   Camera,
   Maximize,
   Download,
@@ -198,6 +208,26 @@ export default function App() {
     release = useRef<(() => void) | null>(null),
     saveQueue = useRef(Promise.resolve()),
     alive = useRef(true);
+  useLayoutEffect(() => {
+    const viewport = canvas.current?.parentElement;
+    if (
+      !save ||
+      !viewport ||
+      Object.values(save.worlds).every((w) => w.viewSize)
+    )
+      return;
+    const viewSize = {
+      width: Math.max(240, Math.min(2560, viewport.clientWidth)),
+      height: Math.max(240, Math.min(2560, viewport.clientHeight)),
+    };
+    setSave((old) => {
+      if (!old) return old;
+      const next = structuredClone(old);
+      for (const world of Object.values(next.worlds))
+        world.viewSize ??= viewSize;
+      return next;
+    });
+  }, [save?.id, save?.created]);
   const previousBirthState = useRef<Save | null>(null);
   current.current = save;
   useEffect(() => {
@@ -603,7 +633,9 @@ export default function App() {
           scene.clientWidth,
           scene.clientHeight,
           viewport.scrollLeft,
-          viewport.clientWidth,
+          Math.min(viewport.clientWidth, scene.clientWidth),
+          viewport.scrollTop,
+          viewport.clientHeight,
         ),
       );
   };
@@ -634,7 +666,9 @@ export default function App() {
     const viewport = scene?.parentElement;
     const placementX =
       scene && viewport
-        ? (viewport.scrollLeft + viewport.clientWidth / 2) / scene.clientWidth
+        ? (viewport.scrollLeft +
+            Math.min(viewport.clientWidth, scene.clientWidth) / 2) /
+          scene.clientWidth
         : 0.5;
     change((s) => {
       if (s.worlds[s.habitat].decor.length >= 150) return;
@@ -653,7 +687,15 @@ export default function App() {
         id: newId,
         kind: id,
         x: Math.max(0.05, Math.min(0.95, placementX)),
-        y: template?.y ?? 0.87,
+        y:
+          scene && viewport
+            ? Math.min(
+                0.92,
+                (viewport.scrollTop +
+                  Math.min(viewport.clientHeight, scene.clientHeight) * 0.87) /
+                  scene.clientHeight,
+              )
+            : (template?.y ?? 0.87),
         scale: template?.scale ?? 1,
         rotation: template?.rotation ?? 0,
         flip: template?.flip ?? false,
@@ -1438,7 +1480,7 @@ export default function App() {
                       )}
             </div>
           </section>
-          {tool === "explore" && world?.size && world.size !== "small" && (
+          {tool === "explore" && (
             <div className="pan-controls">
               <button
                 aria-label={t("Pan left", "Nach links")}
@@ -1449,9 +1491,30 @@ export default function App() {
                   })
                 }
               >
-                ←
+                <ArrowLeft size={20} />
               </button>
-              <span>{t("Drag to explore", "Ziehen zum Erkunden")}</span>
+              <button
+                aria-label={t("Pan up", "Nach oben")}
+                onClick={() =>
+                  canvas.current?.parentElement?.scrollBy({
+                    top: -200,
+                    behavior: reduced ? "instant" : "smooth",
+                  })
+                }
+              >
+                <ArrowUp size={20} />
+              </button>
+              <button
+                aria-label={t("Pan down", "Nach unten")}
+                onClick={() =>
+                  canvas.current?.parentElement?.scrollBy({
+                    top: 200,
+                    behavior: reduced ? "instant" : "smooth",
+                  })
+                }
+              >
+                <ArrowDown size={20} />
+              </button>
               <button
                 aria-label={t("Pan right", "Nach rechts")}
                 onClick={() =>
@@ -1461,7 +1524,7 @@ export default function App() {
                   })
                 }
               >
-                →
+                <ArrowRight size={20} />
               </button>
             </div>
           )}

@@ -182,8 +182,8 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
           icon: <Move />,
           title: t("Explore", "Erkunden"),
           text: t(
-            "Drag to look around a Medium or Large world. Small worlds fit on your screen.",
-            "Ziehe zum Erkunden einer mittleren oder großen Welt. Kleine Welten passen auf deinen Bildschirm.",
+            "Drag in any direction to look around. Turning your phone changes the view, not the size of your world.",
+            "Ziehe in jede Richtung zum Erkunden. Beim Drehen deines Handys bleibt deine Welt gleich groß.",
           ),
         },
         {
