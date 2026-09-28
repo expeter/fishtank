@@ -34,7 +34,7 @@ test("late fish artwork and long German shop labels fit phone cards", async ({
         await destination.click();
       await page.getByRole("button", { name: /^Kleiner Laden/ }).click();
       await page
-        .getByRole("button", { name: "Kleine Freunde", exact: true })
+        .getByRole("button", { name: "Fische", exact: true })
         .click();
       for (const name of names) {
         const card = page.locator(".catalog>button").filter({ hasText: name });

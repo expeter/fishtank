@@ -1,4 +1,5 @@
-import { noise, type WorldEnvironment } from "./environment";
+import { drawApartment } from "./apartment";
+import { celestialPosition, noise, type WorldEnvironment } from "./environment";
 import { visitorPhase } from "./cleanup";
 
 /** Hand-drawn woodland: irregular silhouettes, seed-specific trees and little neighbours. */
@@ -53,93 +54,7 @@ export function drawShore(
     c.fill();
   };
   if (!sea) {
-    // An unmistakably indoor reading nook: woven wallpaper, shelf, books and toys.
-    const wall = c.createLinearGradient(0, 0, 0, surface);
-    wall.addColorStop(0, ["#d9be8d", "#abc4bd", "#c7adc1"][theme]);
-    wall.addColorStop(1, ["#f1dcb0", "#d7e3ce", "#ebd4da"][theme]);
-    c.fillStyle = wall;
-    c.fillRect(0, 0, w, surface);
-    c.strokeStyle = "#fff4d52b";
-    c.lineWidth = 2;
-    for (let x = 14; x < w; x += 25) {
-      c.beginPath();
-      c.moveTo(x, 0);
-      c.lineTo(x, surface);
-      c.stroke();
-    }
-    const shelf = surface - 19;
-    c.fillStyle = "#78543d";
-    c.fillRect(0, shelf, w, 6);
-    c.fillStyle = "#bd8c58";
-    c.fillRect(0, shelf, w, 3);
-    for (let i = 0; i < Math.ceil(w / 310); i++) {
-      const base = i * 310 + 20;
-      for (let book = 0; book < 5; book++) {
-        const x = base + book * 11,
-          height = 23 + noise(book + i * 5) * 13;
-        c.fillStyle = ["#3f7880", "#b85d49", "#dba947", "#688656", "#716780"][
-          book
-        ];
-        c.fillRect(x, shelf - height, 9, height);
-        c.fillStyle = "#eed9a0";
-        c.fillRect(x + 2, shelf - height + 5, 5, 1);
-        c.fillRect(x + 2, shelf - 5, 5, 1);
-      }
-      // A framed childlike fish drawing, hung above the shelf.
-      c.fillStyle = "#96704b";
-      c.fillRect(base + 90, Math.max(5, shelf - 61), 47, 38);
-      c.fillStyle = "#fff3d2";
-      c.fillRect(base + 94, Math.max(9, shelf - 57), 39, 30);
-      const py = Math.max(24, shelf - 41);
-      oval(base + 115, py, 10, 6, "#e39948");
-      c.fillStyle = "#e39948";
-      c.beginPath();
-      c.moveTo(base + 107, py);
-      c.lineTo(base + 101, py - 6);
-      c.lineTo(base + 101, py + 6);
-      c.fill();
-      oval(base + 120, py - 1, 1, 1.5, "#3e4c4b");
-      // Soft toy bear with a stitched belly, sitting beside a tiny houseplant.
-      const bx = base + 172;
-      oval(bx - 8, shelf - 27, 5, 5, "#aa7650");
-      oval(bx + 8, shelf - 27, 5, 5, "#aa7650");
-      oval(bx, shelf - 12, 11, 12, "#b98958");
-      oval(bx, shelf - 24, 10, 9, "#c49a68");
-      oval(bx, shelf - 20, 5, 3, "#f2d4a0");
-      oval(bx - 4, shelf - 25, 1, 1.4, "#493c32");
-      oval(bx + 4, shelf - 25, 1, 1.4, "#493c32");
-      oval(bx, shelf - 22, 1.5, 1, "#493c32");
-      oval(bx, shelf - 10, 6, 7, "#e8c18b");
-      c.strokeStyle = "#a87c53";
-      c.lineWidth = 1;
-      c.beginPath();
-      c.moveTo(bx - 2, shelf - 12);
-      c.lineTo(bx + 2, shelf - 8);
-      c.moveTo(bx + 2, shelf - 12);
-      c.lineTo(bx - 2, shelf - 8);
-      c.stroke();
-      const px = base + 235;
-      c.fillStyle = "#be7758";
-      c.fillRect(px - 9, shelf - 12, 18, 12);
-      for (let j = 0; j < 5; j++)
-        oval(
-          px + (j - 2) * 5,
-          shelf - 16 - noise(j + i) * 10,
-          4,
-          10,
-          j % 2 ? "#699150" : "#436f50",
-          (j - 2) * 0.4,
-        );
-    }
-    // The tank has a warm wooden rim and subtle indoor lighting, even at night.
-    c.fillStyle = "#e2bd7b";
-    c.fillRect(0, surface - 8, w, 4);
-    c.fillStyle = "#7a583f";
-    c.fillRect(0, surface - 4, w, 4);
-    if (day < 1) {
-      c.fillStyle = `rgba(42,34,61,${(1 - day) * 0.16})`;
-      c.fillRect(0, 0, w, surface);
-    }
+    drawApartment(c, w, surface, theme, environment);
     c.restore();
     return;
   }
@@ -156,10 +71,32 @@ export function drawShore(
       );
     }
   c.globalAlpha = 1;
-  const sunX = w * 0.57,
-    sunY = surface * 0.23;
-  oval(sunX, sunY, 19, 19, day > 0.4 ? "#fff0ac" : "#fff3ce");
-  if (day <= 0.4) oval(sunX + 8, sunY - 5, 17, 17, "#24284b");
+  const body = celestialPosition(environment?.hour ?? 9);
+  const sunX = w * body.x,
+    sunY = surface * body.y;
+  const radius = Math.max(9, Math.min(19, surface * 0.105));
+  const glow = c.createRadialGradient(sunX, sunY, 0, sunX, sunY, radius * 2.8);
+  glow.addColorStop(0, body.sun ? "#fff0ab88" : "#e7eeff55");
+  glow.addColorStop(1, "#ffffff00");
+  c.fillStyle = glow;
+  c.fillRect(sunX - radius * 3, sunY - radius * 3, radius * 6, radius * 6);
+  oval(sunX, sunY, radius, radius, body.sun ? "#fff0ac" : "#fff3ce");
+  if (!body.sun) {
+    oval(
+      sunX - radius * 0.3,
+      sunY - radius * 0.2,
+      radius * 0.17,
+      radius * 0.23,
+      "#d3d2c3",
+    );
+    oval(
+      sunX + radius * 0.3,
+      sunY + radius * 0.35,
+      radius * 0.22,
+      radius * 0.17,
+      "#dedaca",
+    );
+  }
   const cloud = environment?.cloud ?? 0.12;
   c.globalAlpha = 0.35 + cloud * 0.5;
   for (let i = 0; i < Math.ceil(w / 200) + 1; i++) {

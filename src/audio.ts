@@ -1,39 +1,45 @@
 let ctx: AudioContext | undefined;
 let timer: ReturnType<typeof setTimeout> | undefined;
+let ambienceTimer: ReturnType<typeof setTimeout> | undefined;
+let ambienceEnabled = false;
+let habitat: "aquarium" | "sea" = "aquarium";
 let step = 0;
 let enabled = false;
 let musicEnabled = false;
 let effectGeneration = 0;
-type Bus = "music" | "effect";
-const voices = new Map<OscillatorNode, { bus: Bus; dispose: () => void }>();
+type Bus = "music" | "effect" | "ambience";
+const voices = new Map<
+  AudioScheduledSourceNode,
+  { bus: Bus; dispose: () => void }
+>();
 const effectTimers = new Set<ReturnType<typeof setTimeout>>();
 
 /** Original miniature scores: -1 is a rest, other values are semitone offsets.
  * Two phrases, two instruments and changing chord roots make each theme breathe. */
 const themes = [
   {
-    base: 60,
-    beat: 780,
+    base: 48,
+    beat: 1050,
     wave: "sine",
     notes: [0, 4, 7, -1, 9, 7, 4, 2, 0, -1, 7, 12, 9, 7, 4, -1],
     chords: [0, 5, 9, 7],
   },
   {
-    base: 62,
+    base: 50,
     beat: 960,
     wave: "triangle",
     notes: [7, -1, 4, 2, 0, 4, -1, 7, 9, 12, 9, -1, 7, 4, 2, -1],
     chords: [0, 7, 5, 0],
   },
   {
-    base: 57,
-    beat: 680,
+    base: 45,
+    beat: 920,
     wave: "sine",
     notes: [0, 7, -1, 4, 9, -1, 7, 12, 11, 7, 4, -1, 2, 4, 0, -1],
     chords: [0, 9, 5, 7],
   },
   {
-    base: 65,
+    base: 53,
     beat: 1180,
     wave: "triangle",
     notes: [12, -1, 7, -1, 9, 7, 4, -1, 5, -1, 4, 2, 0, -1, 7, -1],
@@ -63,26 +69,34 @@ function note(
   if (
     !enabled ||
     (bus === "music" && !musicEnabled) ||
+    (bus === "ambience" && !ambienceEnabled) ||
     !ctx ||
     ctx.state !== "running"
   )
     return;
   const o = ctx.createOscillator(),
-    g = ctx.createGain();
+    g = ctx.createGain(),
+    filter = ctx.createBiquadFilter();
   o.type = wave;
-  o.frequency.value = hz;
+  o.frequency.value = Math.max(65, Math.min(520, hz));
+  filter.type = "lowpass";
+  filter.frequency.value = bus === "music" ? 650 : 700;
+  filter.Q.value = 0.3;
+  volume = Math.max(0.001, Math.min(volume, bus === "music" ? 0.012 : 0.018));
   const at = ctx.currentTime;
   g.gain.setValueAtTime(0.001, at);
   g.gain.exponentialRampToValueAtTime(
     volume,
-    at + Math.min(0.07, duration / 4),
+    at + Math.min(bus === "music" ? 0.3 : 0.035, duration / 3),
   );
   g.gain.exponentialRampToValueAtTime(0.001, at + duration);
-  o.connect(g);
+  o.connect(filter);
+  filter.connect(g);
   g.connect(ctx.destination);
   const dispose = () => {
     if (!voices.delete(o)) return;
     o.disconnect();
+    filter.disconnect();
     g.disconnect();
     o.onended = null;
   };
@@ -100,7 +114,7 @@ function musicTick() {
     phrase = Math.floor(position / 16);
   const melody = theme.notes[position % 16];
   if (melody >= 0) {
-    const octave = phrase && position % 4 === 0 ? 12 : 0;
+    const octave = phrase && position % 4 === 0 ? -5 : 0;
     note(
       pitch(theme.base + melody + octave),
       (theme.beat / 1000) * 1.35,
@@ -108,9 +122,9 @@ function musicTick() {
       "music",
       phrase ? "sine" : theme.wave,
     );
-    // A quiet upper bell accompanies just a few notes, leaving space for water sounds.
+    // A sparse lower answer gives the phrase warmth without upper bells.
     if (position % 8 === 4)
-      note(pitch(theme.base + melody + 12), 0.8, 0.003, "music");
+      note(pitch(theme.base + melody - 7), 1.5, 0.003, "music");
   }
   if (position % 8 === 0) {
     const root = theme.base - 12 + theme.chords[Math.floor(position / 8)];
@@ -133,9 +147,76 @@ function musicTick() {
       : 1;
   timer = setTimeout(musicTick, theme.beat * swing);
 }
-export function sound(wanted: boolean, music: boolean) {
+/** Independent sparse environmental voice; no constant hiss or pitched bird whistles. */
+function ambienceTick() {
+  ambienceTimer = undefined;
+  if (!enabled || !ambienceEnabled) return;
+  if (ctx?.state === "running") {
+    const context = ctx;
+    const duration =
+      habitat === "sea" ? 3 + Math.random() * 2 : 0.9 + Math.random();
+    const buffer = context.createBuffer(
+      1,
+      Math.ceil(context.sampleRate * duration),
+      context.sampleRate,
+    );
+    const data = buffer.getChannelData(0);
+    let low = 0;
+    for (let i = 0; i < data.length; i++) {
+      low = (low + (Math.random() * 2 - 1) * 0.025) / 1.025;
+      // Slow texture movement resembles a receding wave or a soft filter trickle.
+      data[i] = low * (0.7 + 0.3 * Math.sin((i / context.sampleRate) * 7));
+    }
+    const source = context.createBufferSource();
+    const filter = context.createBiquadFilter();
+    const gain = context.createGain();
+    source.buffer = buffer;
+    filter.type = "lowpass";
+    filter.frequency.value = habitat === "sea" ? 420 : 600;
+    filter.Q.value = 0.3;
+    const at = context.currentTime;
+    gain.gain.setValueAtTime(0.001, at);
+    gain.gain.exponentialRampToValueAtTime(
+      habitat === "sea" ? 0.065 : 0.045,
+      at + duration * 0.4,
+    );
+    gain.gain.exponentialRampToValueAtTime(0.001, at + duration);
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(context.destination);
+    const dispose = () => {
+      if (!voices.delete(source)) return;
+      source.disconnect();
+      filter.disconnect();
+      gain.disconnect();
+      source.onended = null;
+    };
+    voices.set(source, { bus: "ambience", dispose });
+    source.onended = dispose;
+    source.start();
+    source.stop(at + duration);
+  }
+  ambienceTimer = setTimeout(
+    ambienceTick,
+    (habitat === "sea" ? 11000 : 14000) + Math.random() * 9000,
+  );
+}
+
+export function sound(
+  wanted: boolean,
+  music: boolean,
+  ambience = false,
+  nextHabitat: "aquarium" | "sea" = "aquarium",
+) {
   enabled = wanted;
   musicEnabled = wanted && music;
+  ambienceEnabled = wanted && ambience;
+  if (!ambienceEnabled || habitat !== nextHabitat) {
+    if (ambienceTimer !== undefined) clearTimeout(ambienceTimer);
+    ambienceTimer = undefined;
+    stopVoices("ambience");
+  }
+  habitat = nextHabitat;
   if (!musicEnabled) {
     if (timer !== undefined) clearTimeout(timer);
     timer = undefined;
@@ -164,8 +245,10 @@ export function sound(wanted: boolean, music: boolean) {
     return; // Audio is optional; unavailable output must not stop the game.
   }
   if (musicEnabled && timer === undefined) timer = setTimeout(musicTick, 300);
+  if (ambienceEnabled && ambienceTimer === undefined)
+    ambienceTimer = setTimeout(ambienceTick, 1800);
 }
-export function tone(hz = 660, duration = 0.15, volume = 0.05) {
+export function tone(hz = 330, duration = 0.18, volume = 0.018) {
   note(hz, duration, volume, "effect");
 }
 
@@ -177,13 +260,13 @@ export function effect(name: SoundEffect) {
   const generation = effectGeneration;
   const variation = 0.94 + Math.random() * 0.12;
   const melodies: Record<SoundEffect, number[]> = {
-    feed: [390, 560, 740],
-    play: [523, 784, 659],
-    learn: [523, 659, 784, 1047],
-    bubble: [240, 410],
-    buy: [659, 880, 1047],
-    place: [330, 440],
-    hello: [659, 523, 784, 659],
+    feed: [175, 220, 294],
+    play: [220, 330, 277],
+    learn: [220, 277, 330, 440],
+    bubble: [140, 210],
+    buy: [262, 330, 392],
+    place: [165, 220],
+    hello: [277, 220, 330, 277],
   };
   const notes = melodies[name];
   const spacing = name === "feed" || name === "bubble" ? 34 : 70;
@@ -193,7 +276,7 @@ export function effect(name: SoundEffect) {
       tone(
         hz * variation,
         name === "bubble" ? 0.085 : 0.13,
-        0.026 / (1 + i * 0.12),
+        0.014 / (1 + i * 0.12),
       );
     };
     if (i === 0) play();

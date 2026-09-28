@@ -123,6 +123,18 @@ const topics = [
   },
 ];
 const observations: Record<string, [string, string]> = {
+  molly: [
+    "Look for the tiny dark marks and rounded tail. Real mollies browse on algae as well as eating small foods.",
+    "Entdecke die kleinen dunklen Zeichen und den runden Schwanz. Echte Mollys weiden auch Algen ab.",
+  ],
+  harlequin: [
+    "Find the dark wedge near the tail. Harlequins feel safer with a shoal of their own kind.",
+    "Findest du den dunklen Keil am Schwanz? Keilfleckbärblinge fühlen sich in einer Gruppe ihrer Art sicherer.",
+  ],
+  cherry_barb: [
+    "Compare the red and tan colours, both with a dark stripe. In nature males often show more red.",
+    "Vergleiche Rot und Hellbraun, beide mit dunklem Streifen. In der Natur zeigen Männchen oft mehr Rot.",
+  ],
   pearl_gourami: [
     "Find the pearl-like spots and long feelers.",
     "Suche die Perlenpunkte und langen Fühler.",

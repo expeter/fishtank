@@ -1,6 +1,6 @@
 # Little Fishtank
 
-A gentle, bilingual aquarium game. Three browser-local worlds, each with an aquarium and sea habitat. Progression and creative modes, 30 animal species, 36 decorations, naming, care, playful movement, breeding, photo export, sound, and offline installation.
+A gentle, bilingual aquarium game. Three browser-local worlds, each with an aquarium and sea habitat. Progression and creative modes, 33 animal species, 36 decorations, naming, care, playful movement, breeding, photo export, sound, and offline installation.
 
 ## Run
 
@@ -183,3 +183,14 @@ Validation: 99 unit tests and 19 phone browser scenarios, including all three sl
 The shop has named, 44px colour swatches with a selection tick and a live fish preview. The chosen palette is saved with the purchased fish; behaviour seeds no longer change its colours. Guppies, goldfish, discus, seahorses and clownfish offer researched alternatives; other species have a conservative natural palette. Existing saved fish retain their original appearance. The phone shop accommodates the swatches in portrait and landscape, with English/German names and instructions in Help. [Research notes](docs/colour-sources.md) distinguish natural forms from ornamental breeding strains.
 
 Validation: 103 unit tests and 17 browser scenarios covering colour previews/purchases/persistence, bilingual phone layouts, and unchanged shop limits. Colour-selection browser tests now gate deployment.
+
+
+## Version 1.1.0: gentler play and a living apartment
+
+- Distance-capped swimming, with slower circles/bubbles and path duration based on actual distance. Older fish move more gently; nighttime encourages resting without preventing play.
+- A dedicated Fish category and separate helpers. Molly, harlequin rasbora and cherry barb bring the catalog to 33 animals, with natural palettes and full offline English/German care and biology pages.
+- A compass for looking around, sponge for cleaning, and recognisable food tins/worms/insects. Six tools still fit one 320px phone row. A dirt/waste percentage sits beneath the animal count; the wallet opens the money-help entry. Pip is explicitly labelled as a source of tips.
+- Warm low-register music and softer effects, plus sparse aquarium/coast ambience with its own saved switch. M remains master mute.
+- A six-minute day, moving sun/moon, daytime birds and nighttime fireflies/resting. Aquarium scenery is an apartment with a window, desk lamp and synchronized wall clock.
+
+Validation: 112 unit tests; 31 targeted browser scenarios across phone layouts, rotation, colour buying, audio lifecycle, selected-fish activities, cleaning, and new offline book pages. Screenshots reviewed at 320px portrait and 851px landscape. Device speakers and perceived loudness still vary; audio pitch/filter/mute behavior has automated coverage.

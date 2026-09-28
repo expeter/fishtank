@@ -51,8 +51,27 @@ describe("optional persistent environmental care", () => {
         visitors.filter((v) => visitorPhase(v, seconds) !== null).length,
       ).toBeLessThanOrEqual(1);
     expect(visitorPhase("fox", 70)).not.toBeNull();
-    expect(visitorPhase("bird", 160)).not.toBeNull();
+    expect(visitorPhase("bird", 120)).not.toBeNull();
     expect(visitorPhase("beaver", 250)).not.toBeNull();
     expect(visitorPhase("fox", 430)).toBe(visitorPhase("fox", 70));
   });
+});
+
+it("shows the same dirt and waste percentages that the scene draws", async () => {
+  const { cleanupPercent } = await import("../src/cleanup");
+  expect(cleanupPercent("aquarium", 1000, 1000)).toBe(0);
+  expect(cleanupPercent("aquarium", 1000, 200000)).toBe(100);
+  expect(cleanupPercent("sea", 1000, 62000)).toBe(6);
+  expect(
+    cleanupPercent("aquarium", 1000, 200000, {
+      glass: Array(16).fill(200000),
+      litter: Array(16).fill(0),
+    }),
+  ).toBe(0);
+});
+
+it("schedules the bird during daylight in the faster six-minute day", async () => {
+  const { worldEnvironment } = await import("../src/environment");
+  expect(visitorPhase("bird", 120)).not.toBeNull();
+  expect(worldEnvironment(0, 120000).daylight).toBeGreaterThan(0.3);
 });

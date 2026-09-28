@@ -9,6 +9,7 @@ export interface BehaviorInput {
   time: number;
   now: number;
   reduced: boolean;
+  daylight?: number;
   tool: string;
   pointer: Point | null;
   food: Point | null;
@@ -78,7 +79,8 @@ export function animalBehavior(f: Fish, e: BehaviorInput): AnimalBehavior {
         ? 0.65
         : e.now - f.born > 86400000
           ? 0.83
-          : 0.93);
+          : 0.93) -
+        (1 - (e.daylight ?? 1)) * 1.1;
   if (floorAnimals.has(f.species)) {
     x = (0.1 + (Math.sin(motion * 0.02 + f.seed) + 1) * 0.4) * e.width;
     y = e.height * 0.85;

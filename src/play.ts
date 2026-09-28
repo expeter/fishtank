@@ -88,6 +88,22 @@ export function pointOnTrail(
   }
   return null;
 }
+/** Travel time follows the drawn distance, not the number of touch samples. */
+export function trailDuration(
+  points: readonly Point[],
+  width = 600,
+  height = 400,
+): number {
+  const length = points
+    .slice(1)
+    .reduce(
+      (sum, p, i) =>
+        sum +
+        Math.hypot((p.x - points[i].x) * width, (p.y - points[i].y) * height),
+      0,
+    );
+  return Math.max(12, length / 24);
+}
 /** A bubble waits where tapped until its playmate arrives, then rises and pops. */
 export function bubbleTarget(
   command: ActivePlayCommand | null,
@@ -97,7 +113,7 @@ export function bubbleTarget(
   const bubble = command.bubble;
   if (bubble.reachedAt === undefined) return { x: bubble.x, y: bubble.y };
   const elapsed = Math.max(0, now - bubble.reachedAt) / 1000;
-  const y = bubble.y - elapsed * 0.045;
+  const y = bubble.y - elapsed * 0.018;
   if (y <= bubble.surfaceY) return null;
   return { x: bubble.x + Math.sin(elapsed * 1.4) * 0.012, y };
 }
@@ -122,18 +138,23 @@ export function playTarget(
   now: number,
   command: ActivePlayCommand | null,
   selected = false,
+  width = 600,
+  height = 400,
 ): Point | null {
   if (!canPlaySpecies(fish) || (!selected && !willingToPlay(fish))) return null;
   const offset = lifeNoise(fish.seed) * 0.16;
+  const duration = fish.trick
+    ? trailDuration(fish.trick.points, width, height)
+    : 16;
   if (command && now - command.startedAt >= 0) {
     const seconds = (now - command.startedAt) / 1000;
     if (command.kind === "replay")
       return fish.trick
         ? pointOnTrail(
             fish.trick.points,
-            (seconds / 5 + offset) % 2 <= 1
-              ? (seconds / 5 + offset) % 2
-              : 2 - ((seconds / 5 + offset) % 2),
+            (seconds / duration + offset) % 2 <= 1
+              ? (seconds / duration + offset) % 2
+              : 2 - ((seconds / duration + offset) % 2),
           )
         : null;
     if (command.kind === "gather")
@@ -143,8 +164,18 @@ export function playTarget(
       };
     if (command.kind === "circle")
       return {
-        x: command.center.x + Math.cos(seconds * 1.1 + fish.seed) * 0.12,
-        y: command.center.y + Math.sin(seconds * 1.1 + fish.seed) * 0.12,
+        x:
+          command.center.x +
+          Math.cos(
+            seconds * (24 / (Math.max(width, height) * 0.12)) + fish.seed,
+          ) *
+            0.12,
+        y:
+          command.center.y +
+          Math.sin(
+            seconds * (24 / (Math.max(width, height) * 0.12)) + fish.seed,
+          ) *
+            0.12,
       };
     return bubbleTarget(command, now);
   }
@@ -152,10 +183,14 @@ export function playTarget(
   const age = now - fish.trick.learnedAt;
   if (age < 0) return null;
   if (selected) {
-    const phase = (age / 5000 + offset) % 2;
+    const phase = (age / (duration * 1000) + offset) % 2;
     return pointOnTrail(fish.trick.points, phase <= 1 ? phase : 2 - phase);
   }
   if (age > 180000) return null;
-  const cycle = (age / 1000 + offset * 3) % 16;
-  return cycle < 8 ? pointOnTrail(fish.trick.points, cycle / 8) : null;
+  const cycle = (age / 1000 + offset * 3) % (duration * 2 + 8);
+  if (cycle >= duration * 2) return null;
+  return pointOnTrail(
+    fish.trick.points,
+    cycle <= duration ? cycle / duration : 2 - cycle / duration,
+  );
 }

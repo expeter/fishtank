@@ -1,6 +1,11 @@
-import type { ReactNode } from "react";
+import CleanIcon from "./CleanIcon";
+import { useEffect, type ReactNode } from "react";
 import {
   BookOpen,
+  Pencil,
+  Play,
+  Circle,
+  Wind as BubbleIcon,
   Camera,
   Coins,
   Eraser,
@@ -9,7 +14,7 @@ import {
   Leaf,
   Maximize,
   Menu,
-  Move,
+  Compass,
   RotateCcw,
   RotateCw,
   Settings,
@@ -89,15 +94,31 @@ function FishSign({ kind }: { kind: BadgeKind }) {
   );
 }
 interface HelpItem {
+  id?: string;
   icon: ReactNode;
   title: string;
   text: string;
 }
-export default function HelpGuide({ lang }: { lang: Lang }) {
+export default function HelpGuide({
+  lang,
+  initialTopic,
+}: {
+  lang: Lang;
+  initialTopic?: "money";
+}) {
+  useEffect(() => {
+    if (initialTopic !== "money") return;
+    const frame = requestAnimationFrame(() =>
+      document
+        .getElementById("help-money")
+        ?.scrollIntoView({ block: "center" }),
+    );
+    return () => cancelAnimationFrame(frame);
+  }, [initialTopic]);
   const t = (en: string, de: string) => (lang === "de" ? de : en);
   const sections: { title: string; icon: ReactNode; items: HelpItem[] }[] = [
     {
-      title: t("Signs above a fish", "Zeichen über einem Fisch"),
+      title: t("Fish signs and games", "Fischzeichen und Spiele"),
       icon: <Fish />,
       items: [
         {
@@ -112,12 +133,12 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
           icon: <FishSign kind="selected" />,
           title: t("Your playmate", "Dein Spielfreund"),
           text: t(
-            "The golden ring marks your chosen fish. Only this friend follows your game.",
-            "Der goldene Ring zeigt deinen gewählten Fisch. Nur dieser Freund macht beim Spiel mit.",
+            "The golden outline marks your chosen fish. Only this friend follows your game.",
+            "Der goldene Umriss zeigt deinen gewählten Fisch. Nur dieser Freund macht beim Spiel mit.",
           ),
         },
         {
-          icon: <FishSign kind="draw" />,
+          icon: <Pencil />,
           title: t("Pencil: draw a trail", "Stift: Spur zeichnen"),
           text: t(
             "Hold your finger on the water and draw a slow path. Your friend can learn it!",
@@ -125,15 +146,15 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
           ),
         },
         {
-          icon: <FishSign kind="replay" />,
+          icon: <Play />,
           title: t("Following a path", "Einer Spur folgen"),
           text: t(
-            "The triangle means your fish is following a path or gathering. Replay repeats a learned trail.",
-            "Das Dreieck zeigt: Dein Fisch folgt einer Spur oder kommt herbei. Wiederholen spielt eine gelernte Spur ab.",
+            "Tap Replay to repeat a learned trail. Your fish swims slowly along it; long paths take longer.",
+            "Tippe auf Wiederholen für eine gelernte Spur. Dein Fisch schwimmt ihr langsam nach; lange Wege dauern länger.",
           ),
         },
         {
-          icon: <FishSign kind="circle" />,
+          icon: <Circle />,
           title: t("Circle dance", "Kreistanz"),
           text: t(
             "Your friend keeps swimming a little circle until you choose another game or Finish playing.",
@@ -141,7 +162,7 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
           ),
         },
         {
-          icon: <FishSign kind="bubbles" />,
+          icon: <BubbleIcon />,
           title: t("Bubble game", "Blasenspiel"),
           text: t(
             "Tap the water to place a bubble. Your fish swims to it, then follows it upward. Tap elsewhere to move it.",
@@ -179,11 +200,19 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
           ),
         },
         {
-          icon: <Move />,
+          icon: <Compass />,
           title: t("Explore", "Erkunden"),
           text: t(
             "Drag in any direction to look around. Turning your phone changes the view, not the size of your world.",
             "Ziehe in jede Richtung zum Erkunden. Beim Drehen deines Handys bleibt deine Welt gleich groß.",
+          ),
+        },
+        {
+          icon: <CleanIcon />,
+          title: t("Clean", "Putzen"),
+          text: t(
+            "Use the brush in the dock to wipe the aquarium glass or tap litter at the coast. The percentage below your animal count shows how much needs cleaning.",
+            "Mit der Bürste in der Leiste wischst du die Scheibe oder tippst Müll am Ufer an. Die Prozentzahl unter der Tierzahl zeigt, wie viel zu putzen ist.",
           ),
         },
         {
@@ -271,6 +300,7 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
           ),
         },
         {
+          id: "help-money",
           icon: <Coins />,
           title: t("Coins and growing", "Münzen und Wachsen"),
           text: t(
@@ -353,7 +383,7 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
   ];
   return (
     <div className="help-guide">
-      <h2>{t("A little help from Pip", "Ein bisschen Hilfe von Pip")}</h2>
+      <h2>{t("How to play", "So wird gespielt")}</h2>
       <p className="help-intro">
         {t(
           "See a new sign? Find its picture here. Tap a heading to explore.",
@@ -365,7 +395,7 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
           key={index}
           className="help-chapter"
           name="fishtank-help"
-          open={index === 0}
+          open={index === (initialTopic === "money" ? 3 : 0)}
         >
           <summary>
             <span aria-hidden="true">{section.icon}</span>
@@ -373,7 +403,7 @@ export default function HelpGuide({ lang }: { lang: Lang }) {
           </summary>
           <ul>
             {section.items.map((item, i) => (
-              <li key={i}>
+              <li key={i} id={item.id}>
                 <span className="help-picture" aria-hidden="true">
                   {item.icon}
                 </span>

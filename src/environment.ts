@@ -1,4 +1,5 @@
-/** A short storybook day lasts 24 minutes. Weather changes independently of visits. */
+/** A storybook day lasts six minutes, independently of visits. */
+export const DAY_CYCLE_MS = 6 * 60 * 1000;
 export type Weather = "clear" | "cloudy" | "rain";
 export interface WorldEnvironment {
   hour: number;
@@ -20,7 +21,7 @@ export function worldEnvironment(
   now: number,
 ): WorldEnvironment {
   const seconds = Math.max(0, now - created) / 1000;
-  const hour = (9 + seconds / 60) % 24;
+  const hour = (9 + ((seconds * 1000) / DAY_CYCLE_MS) * 24) % 24;
   const daylight = clamp(
     (Math.sin(((hour - 6) / 24) * Math.PI * 2) + 0.12) / 0.6,
   );
@@ -154,4 +155,22 @@ export function drawBubbles(
     c.fill();
   }
   c.restore();
+}
+
+/** Normalized above-horizon arc; sun and moon take turns every twelve game hours. */
+export function celestialPosition(hour: number) {
+  const h = ((hour % 24) + 24) % 24;
+  const sun = h >= 6 && h < 18;
+  const phase = (sun ? h - 6 : (h + 6) % 24) / 12;
+  return {
+    sun,
+    x: 0.08 + phase * 0.84,
+    y: 0.62 - Math.sin(phase * Math.PI) * 0.47,
+  };
+}
+export function clockAngles(hour: number) {
+  return {
+    hour: ((hour % 12) / 12) * Math.PI * 2 - Math.PI / 2,
+    minute: (hour % 1) * Math.PI * 2 - Math.PI / 2,
+  };
 }

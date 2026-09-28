@@ -1,3 +1,4 @@
+import { extraFishKnowledge, extraFishDiscovery } from "./extraFish";
 /** Child-readable real-world care notes. Research and species choices: docs/knowledge-sources.md. */
 export interface KnowledgeText {
   en: string;
@@ -30,6 +31,7 @@ const profile = (
   facts: rows.slice(7).map((row) => text(...row)),
 });
 export const fishKnowledge: Record<string, FishKnowledge> = {
+  ...extraFishKnowledge,
   pearl_gourami: profile("Trichopodus leerii", [
     [
       "A Southeast Asian freshwater fish with pearly spots.",
@@ -1070,6 +1072,7 @@ const discovery = (rows: [string, string][]): FishDiscovery => ({
   mistakes: text(...rows[6]),
 });
 export const fishDiscovery: Record<string, FishDiscovery> = {
+  ...extraFishDiscovery,
   guppy: discovery([
     [
       "Wild guppies come from northeastern South America and nearby Caribbean islands. Aquarium colours were developed through many generations of breeding.",

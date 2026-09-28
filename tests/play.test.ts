@@ -8,6 +8,7 @@ import {
   learnableTrail,
   pointOnTrail,
   playTarget,
+  trailDuration,
   willingToPlay,
   canPlaySpecies,
   invitedPlayer,
@@ -95,8 +96,14 @@ describe("playful paths and gentle social life", () => {
   it("continues an explicitly selected learned path indefinitely", () => {
     for (const now of [200000, 3600000, 86400000])
       expect(playTarget(friend, now, null, true)).not.toBeNull();
-    const samples = [0, 2000, 4000, 6000].map(
-      (delta) => playTarget(friend, 3600000 + delta, null, true)!.x,
+    const samples = [0, 0.25, 0.5, 0.75, 1, 1.5].map(
+      (phase) =>
+        playTarget(
+          friend,
+          3600000 + phase * trailDuration(friend.trick!.points) * 1000,
+          null,
+          true,
+        )!.x,
     );
     expect(Math.max(...samples) - Math.min(...samples)).toBeGreaterThan(0.25);
   });
@@ -115,8 +122,8 @@ describe("playful paths and gentle social life", () => {
       y: 0.7,
     });
     placed.bubble!.reachedAt = 90000;
-    expect(bubbleTarget(placed, 93000)!.y).toBeCloseTo(0.565);
-    expect(bubbleTarget(placed, 110000)).toBeNull();
+    expect(bubbleTarget(placed, 93000)!.y).toBeCloseTo(0.646);
+    expect(bubbleTarget(placed, 120000)).toBeNull();
     const moved = placeBubble(placed, { x: 0.2, y: 0.6 }, 110000, 0.25);
     expect(moved.bubble!.reachedAt).toBeUndefined();
     expect(playTarget(friend, 111000, moved, true)).toEqual({ x: 0.2, y: 0.6 });
@@ -216,4 +223,13 @@ describe("playful paths and gentle social life", () => {
     }
     expect(old).toBeGreaterThan(young);
   });
+});
+
+it("slows long and large-world paths to a gentle distance-based pace", () => {
+  const points = [
+    { x: 0.1, y: 0.5 },
+    { x: 0.9, y: 0.5 },
+  ];
+  expect(trailDuration(points, 600, 400)).toBe(20);
+  expect(trailDuration(points, 1200, 400)).toBe(40);
 });

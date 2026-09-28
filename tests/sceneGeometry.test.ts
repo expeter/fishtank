@@ -111,3 +111,17 @@ it("fits an edited decoration within a vertically scrolled viewport", () => {
     )?.id,
   ).toBe("plant");
 });
+
+it("bounds swimming speed regardless of target distance or frame rate", async () => {
+  const { swimStep } = await import("../src/sceneGeometry");
+  for (const fps of [30, 60, 120]) {
+    let p = { x: 0, y: 0 };
+    for (let i = 0; i < fps; i++)
+      p = swimStep(p, { x: 4000, y: 3000 }, 1000 / fps, 30);
+    expect(Math.hypot(p.x, p.y)).toBeCloseTo(30, 6);
+  }
+  expect(swimStep({ x: 2, y: 2 }, { x: 2, y: 2 }, 16, 30)).toEqual({
+    x: 2,
+    y: 2,
+  });
+});

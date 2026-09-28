@@ -85,3 +85,23 @@ export function fitDecoration(
       ) / height,
   };
 }
+
+/** Distance-capped movement: a far-away tap must never turn into a sprint. */
+export function swimStep(
+  from: { x: number; y: number },
+  target: { x: number; y: number },
+  elapsedMs: number,
+  pixelsPerSecond: number,
+) {
+  const dx = target.x - from.x,
+    dy = target.y - from.y;
+  const distance = Math.hypot(dx, dy);
+  const step = Math.min(
+    distance * motionBlend(0.018, elapsedMs),
+    (Math.max(0, pixelsPerSecond) * Math.max(0, Math.min(100, elapsedMs))) /
+      1000,
+  );
+  return distance
+    ? { x: from.x + (dx / distance) * step, y: from.y + (dy / distance) * step }
+    : { ...from };
+}

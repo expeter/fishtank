@@ -19,11 +19,23 @@ test("all animal and decoration catalog artwork renders in both habitats", async
     await page
       .getByRole("button", { name: "Little shop Find something lovely" })
       .click();
+    await page.getByRole("button", { name: "Fish", exact: true }).click();
+    await expect(page.locator(".animal-card")).toHaveCount(
+      animals.filter(
+        (a) =>
+          canLiveIn(a.id, habitat) &&
+          !["snail", "crab", "shrimp", "frog", "jelly"].includes(a.id),
+      ).length,
+    );
     await page
-      .getByRole("button", { name: "Little friends", exact: true })
+      .getByRole("button", { name: "Little helpers", exact: true })
       .click();
-    await expect(page.locator(".catalog>button")).toHaveCount(
-      animals.filter((a) => canLiveIn(a.id, habitat)).length,
+    await expect(page.locator(".animal-card")).toHaveCount(
+      animals.filter(
+        (a) =>
+          canLiveIn(a.id, habitat) &&
+          ["snail", "crab", "shrimp", "frog", "jelly"].includes(a.id),
+      ).length,
     );
     await page
       .locator(".shop-modal")
@@ -74,9 +86,7 @@ test("German defaults and long names fit phone portrait and landscape layouts", 
         fullPage: true,
       });
       await page.getByRole("button", { name: /^Kleiner Laden/ }).click();
-      await page
-        .getByRole("button", { name: "Kleine Freunde", exact: true })
-        .click();
+      await page.getByRole("button", { name: "Helfer", exact: true }).click();
       await page
         .getByRole("button", { name: "Kleiner Frosch Hinzufügen" })
         .click();

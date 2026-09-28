@@ -174,3 +174,22 @@ describe("autonomous aquarium behavior", () => {
     expect(frogSnack(0, 9.1, pos, 400).y).toBeLessThan(waterSurface(400));
   });
 });
+
+it("rests more at night but still responds to a selected game", () => {
+  const f = { ...makeFish("guppy", true, 0), seed: 0.3, careUntil: 0 };
+  expect(animalBehavior(f, { ...environment, daylight: 1 }).sleeping).toBe(
+    false,
+  );
+  expect(animalBehavior(f, { ...environment, daylight: 0 }).sleeping).toBe(
+    true,
+  );
+  expect(
+    animalBehavior(f, {
+      ...environment,
+      daylight: 0,
+      forcePlay: true,
+      tool: "play",
+      pointer: { x: 0.5, y: 0.5 },
+    }).sleeping,
+  ).toBe(false);
+});

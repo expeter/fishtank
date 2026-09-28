@@ -8,6 +8,35 @@ class FakeContext {
   completeResume?: () => void;
   oscillators: any[] = [];
   gains: any[] = [];
+  filters: any[] = [];
+  buffers: any[] = [];
+  sampleRate = 8000;
+  createBiquadFilter() {
+    const node = {
+      type: "",
+      frequency: { value: 0 },
+      Q: { value: 0 },
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+    };
+    this.filters.push(node);
+    return node;
+  }
+  createBuffer(_channels: number, length: number) {
+    return { getChannelData: () => new Float32Array(length) };
+  }
+  createBufferSource() {
+    const node = {
+      buffer: undefined,
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+      start: vi.fn(),
+      stop: vi.fn(),
+      onended: null,
+    };
+    this.buffers.push(node);
+    return node;
+  }
   constructor() {
     FakeContext.instances.push(this);
   }
@@ -202,4 +231,67 @@ it("switches off music immediately while allowing an effect phrase to finish", a
   expect(ctx.oscillators).toHaveLength(music.length + 4);
   sound(false, false);
   expect(vi.getTimerCount()).toBe(0);
+});
+
+it("keeps ambience independent, sparse and quiet, and replaces habitat sounds without overlapping schedules", async () => {
+  const { sound, effect } = await import("../src/audio");
+  sound(true, false, true, "aquarium");
+  const ctx = FakeContext.instances[0];
+  for (let i = 0; i < 20; i++) sound(true, false, true, "aquarium");
+  expect(vi.getTimerCount()).toBe(1);
+  await vi.advanceTimersByTimeAsync(1800);
+  expect(ctx.buffers).toHaveLength(1);
+  expect(ctx.oscillators).toHaveLength(0);
+  expect(ctx.filters[0].frequency.value).toBe(600);
+  await vi.advanceTimersByTimeAsync(10000);
+  expect(ctx.buffers).toHaveLength(1);
+  sound(true, false, true, "sea");
+  expect(ctx.buffers[0].disconnect).toHaveBeenCalledOnce();
+  await vi.advanceTimersByTimeAsync(1800);
+  expect(ctx.buffers).toHaveLength(2);
+  expect(ctx.filters.at(-1).frequency.value).toBe(420);
+  sound(true, false, false, "sea");
+  expect(vi.getTimerCount()).toBe(0);
+  expect(ctx.buffers[1].disconnect).toHaveBeenCalledOnce();
+  effect("feed");
+  expect(ctx.oscillators).toHaveLength(1);
+  sound(false, true, true, "sea");
+  await vi.advanceTimersByTimeAsync(60000);
+  expect(ctx.buffers).toHaveLength(2);
+  expect(vi.getTimerCount()).toBe(0);
+});
+
+it("bounds all musical and effect voices to a mellow filtered register", async () => {
+  const { sound, effect, tone } = await import("../src/audio");
+  sound(true, true);
+  await vi.advanceTimersByTimeAsync(150000);
+  for (const name of [
+    "feed",
+    "play",
+    "learn",
+    "bubble",
+    "buy",
+    "place",
+    "hello",
+  ] as const)
+    effect(name);
+  tone(4000, 0.2, 1);
+  await vi.advanceTimersByTimeAsync(300);
+  const ctx = FakeContext.instances[0];
+  expect(
+    ctx.oscillators.every(
+      (o) => o.frequency.value >= 65 && o.frequency.value <= 520,
+    ),
+  ).toBe(true);
+  expect(
+    ctx.filters.every((f) => f.type === "lowpass" && f.frequency.value <= 700),
+  ).toBe(true);
+  expect(
+    ctx.gains.every((g) =>
+      g.gain.exponentialRampToValueAtTime.mock.calls.every(
+        ([value]: number[]) => value <= 0.018,
+      ),
+    ),
+  ).toBe(true);
+  sound(false, false);
 });

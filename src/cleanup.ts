@@ -45,10 +45,25 @@ export type Visitor = "fox" | "bird" | "beaver";
 export function visitorPhase(visitor: Visitor, seconds: number): number | null {
   const [first, duration] = {
     fox: [65, 42],
-    bird: [150, 32],
+    bird: [110, 32],
     beaver: [235, 62],
   }[visitor];
   if (seconds < first) return null;
   const phase = (seconds - first) % 360;
   return phase < duration ? phase / duration : null;
+}
+
+/** HUD and drawing use the same 16 patches/items, including saved cleaning times. */
+export function cleanupPercent(
+  habitat: "aquarium" | "sea",
+  created: number,
+  now: number,
+  state?: CleanupState,
+): number {
+  const amount = Array.from({ length: 16 }, (_, i) =>
+    habitat === "aquarium"
+      ? glassDirt(i, created, now, state?.glass[i] ?? 0)
+      : Number(litterPresent(i, created, now, state?.litter[i] ?? 0)),
+  ).reduce((a, b) => a + b, 0);
+  return Math.round((amount / 16) * 100);
 }

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { bubbleField, worldEnvironment } from "../src/environment";
+import {
+  bubbleField,
+  worldEnvironment,
+  DAY_CYCLE_MS,
+  celestialPosition,
+  clockAngles,
+} from "../src/environment";
 
 describe("living woodland environment", () => {
   it("starts sunny and has a full persistent storybook day", () => {
@@ -9,8 +15,8 @@ describe("living woodland environment", () => {
       weather: "clear",
       daylight: 1,
     });
-    expect(worldEnvironment(born, born + 12 * 60000).daylight).toBe(0);
-    expect(worldEnvironment(born, born + 24 * 60000).hour).toBe(9);
+    expect(worldEnvironment(born, born + DAY_CYCLE_MS / 2).daylight).toBe(0);
+    expect(worldEnvironment(born, born + DAY_CYCLE_MS).hour).toBe(9);
     expect(worldEnvironment(born, born + 745123)).toEqual(
       worldEnvironment(born, born + 745123),
     );
@@ -49,4 +55,16 @@ describe("living woodland environment", () => {
     expect(bubbleField(390, 680, 100, 60, 2381)).not.toEqual(start);
     expect(bubbleField(390, 680, 100, 0, 2382)).not.toEqual(start);
   });
+});
+
+it("moves sun and moon through corresponding arcs and synchronizes clock hands", () => {
+  expect(DAY_CYCLE_MS).toBe(360000);
+  expect(celestialPosition(6)).toMatchObject({ sun: true, x: 0.08 });
+  expect(celestialPosition(12).y).toBeCloseTo(0.15);
+  expect(celestialPosition(17).x).toBeGreaterThan(celestialPosition(9).x);
+  expect(celestialPosition(0)).toEqual(celestialPosition(24));
+  expect(celestialPosition(0)).toMatchObject({ sun: false });
+  expect(clockAngles(9).minute).toBeCloseTo(-Math.PI / 2);
+  expect(clockAngles(9.5).minute).toBeCloseTo(Math.PI / 2);
+  expect(clockAngles(9.5).hour).toBeGreaterThan(clockAngles(9).hour);
 });

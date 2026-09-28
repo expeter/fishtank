@@ -1,3 +1,4 @@
+import { extraFishVariants } from "./extraFish";
 /** Curated wild colour palettes. See docs/colour-sources.md; not a free hue wheel.
  * Labels describe colours, not sex or a promise of genetic inheritance. */
 export interface FishVariant {
@@ -19,6 +20,7 @@ const v = (
   fin?: string,
 ): FishVariant => ({ id, en, de, color, accent, pattern, fin });
 export const fishVariants: Readonly<Record<string, readonly FishVariant[]>> = {
+  ...extraFishVariants,
   guppy: [
     v(
       "orange",

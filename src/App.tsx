@@ -1,3 +1,5 @@
+import CleanIcon from "./CleanIcon";
+import { cleanupPercent } from "./cleanup";
 import FishShopCard from "./FishShopCard";
 import { flushSync } from "react-dom";
 import LanguageSwitch from "./LanguageSwitch";
@@ -34,6 +36,7 @@ import {
 } from "react";
 import {
   Shovel,
+  Compass,
   Eraser,
   BookOpen,
   Circle,
@@ -149,6 +152,7 @@ export default function App() {
   const [postcardBusy, setPostcardBusy] = useState(false);
   const postcardSource = useRef<HTMLCanvasElement | null>(null);
   const postcardMeta = useRef({ worldName: "", timestamp: 0 });
+  const [helpTopic, setHelpTopic] = useState<"money" | undefined>();
   const [fishColours, setFishColours] = useState<Record<string, string>>({});
   const [foodKind, setFoodKind] = useState<FoodKind>("flakes");
   const [guideSpecies, setGuideSpecies] = useState<string | null>(null);
@@ -180,6 +184,7 @@ export default function App() {
     [mode, setMode] = useState<Mode>("progression"),
     [muted, setMuted] = useState(() => setting("muted", true)),
     [music, setMusic] = useState(() => setting("music", true)),
+    [ambience, setAmbience] = useState(() => setting("ambience", true)),
     [effects, setEffects] = useState(() => setting("effects", true)),
     [reduced, setReduced] = useState(() =>
       setting(
@@ -389,23 +394,40 @@ export default function App() {
   }, []);
   useEffect(() => {
     try {
-      for (const [k, v] of Object.entries({ muted, music, effects, reduced }))
+      for (const [k, v] of Object.entries({
+        muted,
+        music,
+        ambience,
+        effects,
+        reduced,
+      }))
         localStorage.setItem("ft-" + k, JSON.stringify(v));
     } catch {}
-  }, [muted, music, effects, reduced]);
+  }, [muted, music, ambience, effects, reduced]);
   useEffect(() => {
-    const sync = () => sound(!muted && !document.hidden, music);
+    const sync = () =>
+      sound(
+        !muted && !document.hidden,
+        music,
+        ambience && !!save,
+        save?.habitat ?? "aquarium",
+      );
     sync();
     document.addEventListener("visibilitychange", sync);
     return () => document.removeEventListener("visibilitychange", sync);
-  }, [muted, music]);
+  }, [muted, music, ambience, save?.habitat, !!save]);
   useEffect(() => {
     const unlock = () => {
-      sound(!muted && !document.hidden, music);
+      sound(
+        !muted && !document.hidden,
+        music,
+        ambience && !!save,
+        save?.habitat ?? "aquarium",
+      );
     };
     window.addEventListener("pointerdown", unlock, { once: true });
     return () => window.removeEventListener("pointerdown", unlock);
-  }, [muted, music]);
+  }, [muted, music, ambience, save?.habitat, !!save]);
   useEffect(() => {
     const handler = (e: Event) => {
       e.preventDefault();
@@ -1271,12 +1293,28 @@ export default function App() {
                 aria-label={t("Meet all animals", "Alle Tiere ansehen")}
                 onClick={() => setPanel("residents")}
               >
-                <FishIcon size={19} />
-                {world!.fish.length}
-                <small>/ {capacity(save)}</small>
+                <span className="fish-count">
+                  <FishIcon size={19} />
+                  {world!.fish.length}
+                  <small>/ {capacity(save)}</small>
+                </span>
+                <span className="dirt-meter" aria-label={t("Dirt", "Schmutz")}>
+                  <CleanIcon size={11} />
+                  {cleanupPercent(
+                    save.habitat,
+                    save.created,
+                    Date.now(),
+                    world!.cleanup,
+                  )}
+                  %
+                </span>
               </button>
               {save.mode === "progression" ? (
-                <div
+                <button
+                  onClick={() => {
+                    setHelpTopic("money");
+                    setPanel("help");
+                  }}
                   className="coin-pill"
                   aria-label={t("Wallet", "Geldbeutel")}
                   aria-live="polite"
@@ -1289,12 +1327,19 @@ export default function App() {
                       }).format(save.coins)
                     : save.coins}
                   <span>{t("coins", "Münzen")}</span>
-                </div>
+                </button>
               ) : (
-                <div className="coin-pill">
+                <button
+                  className="coin-pill"
+                  aria-label={t("Money help", "Hilfe zu Münzen")}
+                  onClick={() => {
+                    setHelpTopic("money");
+                    setPanel("help");
+                  }}
+                >
                   <Sparkles size={18} />
                   {t("Free", "Gratis")}
-                </div>
+                </button>
               )}
             </div>
           </div>
@@ -1559,8 +1604,15 @@ export default function App() {
                 id: "explore",
                 en: "Explore",
                 de: "Erkunden",
-                sub: t("Drag the world", "Welt verschieben"),
-                icon: <Move />,
+                sub: t("Look around", "Umschauen"),
+                icon: <Compass />,
+              },
+              {
+                id: "clean",
+                en: "Clean",
+                de: "Putzen",
+                sub: t("Glass and shore", "Scheibe und Ufer"),
+                icon: <CleanIcon />,
               },
               {
                 id: "shop",
@@ -2373,8 +2425,10 @@ export default function App() {
                     <Download />,
                     () => setPanel("install"),
                   )}
-                  {btn(t("How to play", "So wird gespielt"), <Heart />, () =>
-                    setPanel("help"),
+                  {btn(
+                    t("How to play", "So wird gespielt"),
+                    <Heart />,
+                    () => (setHelpTopic(undefined), setPanel("help")),
                   )}
                   {update &&
                     btn(
@@ -2468,6 +2522,11 @@ export default function App() {
                       t("Gentle music", "Sanfte Musik"),
                       music,
                       () => setMusic((v) => !v),
+                    ],
+                    [
+                      t("Ambient sounds", "Umgebungsgeräusche"),
+                      ambience,
+                      () => setAmbience((v) => !v),
                     ],
                     [
                       t("Little sound effects", "Kleine Klänge"),
@@ -2594,7 +2653,7 @@ export default function App() {
             )}
             {panel === "help" && (
               <>
-                <HelpGuide lang={lang} />
+                <HelpGuide lang={lang} initialTopic={helpTopic} />
                 {save && (
                   <button
                     className="outline"
@@ -2604,7 +2663,7 @@ export default function App() {
                       setPipOpen(true);
                     }}
                   >
-                    {t("Meet Pip", "Pip kennenlernen")}
+                    {t("Ask Pip for a tip", "Pip um einen Tipp bitten")}
                   </button>
                 )}
               </>
@@ -2677,12 +2736,12 @@ export default function App() {
                 )}
                 <div className="segmented">
                   <button
-                    aria-label={t("Little friends", "Kleine Freunde")}
+                    aria-label={t("Fish", "Fische")}
                     className={tab === "animals" ? "active" : ""}
                     onClick={() => setTab("animals")}
                   >
                     <FishIcon size={17} />
-                    {t("Animals", "Tiere")}
+                    {t("Fish", "Fische")}
                   </button>
                   <button
                     className={tab === "critters" ? "active" : ""}
@@ -2723,10 +2782,14 @@ export default function App() {
                         .filter(
                           (a) =>
                             canLiveIn(a.id, save.habitat) &&
-                            (tab !== "critters" ||
-                              ["snail", "crab", "shrimp", "frog"].includes(
-                                a.id,
-                              )),
+                            [
+                              "snail",
+                              "crab",
+                              "shrimp",
+                              "frog",
+                              "jelly",
+                            ].includes(a.id) ===
+                              (tab === "critters"),
                         )
                         .map((a) => (
                           <FishShopCard

@@ -158,6 +158,7 @@ test("one fish tap opens its centered naming and play card directly", async ({
 test("a chosen shy fish responds to circle, bubble and remembered trail actions", async ({
   page,
 }) => {
+  test.setTimeout(60000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const { shy, other } = await fixture(page);
@@ -187,7 +188,7 @@ test("a chosen shy fish responds to circle, bubble and remembered trail actions"
         box.x + box.width * 0.55,
         box.y + box.height * 0.7,
       );
-      await page.clock.runFor(4000);
+      await page.clock.runFor(10000);
       await expect(page.locator(".compact-friend")).toHaveCount(0);
     } else {
       // The old implementation reset the assignment after eleven seconds.
@@ -197,7 +198,8 @@ test("a chosen shy fish responds to circle, bubble and remembered trail actions"
     }
     const points = [];
     for (let i = 0; i < 4; i++) {
-      await page.clock.runFor(1000);
+      // Observe the slower fish for a longer interval instead of requiring a sprint.
+      await page.clock.runFor(3000);
       const p = await pixels(page, shy);
       expect(p.count).toBeGreaterThan(20);
       points.push(p);

@@ -1,3 +1,4 @@
+import { extraFishDefinitions } from "./extraFish";
 import { fishVariants, getFishVariant } from "./fishVariants";
 import { toyDecorations } from "./toys";
 import type { FoodKind } from "./feeding";
@@ -17,7 +18,7 @@ export const slotSize = (id: number): WorldSize =>
 export const SAND_BINS = 48;
 export const MAX_SAND_HEIGHT = 0.22;
 export const ANIMAL_CAPACITY = 24;
-export const VERSION = "1.0.5";
+export const VERSION = "1.1.0";
 export const tiers = [0, 150, 600, 1800, 6000, 20000, 60000],
   prices = [20, 60, 180, 500, 2000, 8000, 24000],
   growth = [600, 1800, 7200, 14400, 14400, 21600, 43200];
@@ -87,14 +88,16 @@ export const animals = [
     "#313a58",
   ],
   ["zebra_shark", "Zebra shark", "Zebrahai", "sea", 6, "#d6b781"],
-].map(([id, en, de, habitat, tier, color]) => ({
-  id: String(id),
-  en: String(en),
-  de: String(de),
-  habitat: habitat as Habitat,
-  tier: Number(tier),
-  color: String(color),
-}));
+]
+  .map(([id, en, de, habitat, tier, color]) => ({
+    id: String(id),
+    en: String(en),
+    de: String(de),
+    habitat: habitat as Habitat,
+    tier: Number(tier),
+    color: String(color),
+  }))
+  .concat(extraFishDefinitions);
 export const decorations = [
   "Leafy fern",
   "Ribbon grass",

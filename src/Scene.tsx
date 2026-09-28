@@ -36,7 +36,7 @@ import {
   type FoodKind,
 } from "./feeding";
 import { worldEnvironment, drawWeather, drawBubbles } from "./environment";
-import { motionBlend, pickDecoration } from "./sceneGeometry";
+import { swimStep, pickDecoration } from "./sceneGeometry";
 import { useEffect, useRef } from "react";
 import {
   animals,
@@ -614,20 +614,26 @@ export function drawFish(
     c.fill();
   } else {
     c.scale(markings.bodyWidth, markings.bodyHeight);
+    if (a.id === "cherry_barb") c.scale(1.05, 0.75);
+    if (a.id === "harlequin") c.scale(0.95, 0.85);
     c.fillStyle = a.id === "tang" ? "#f2d476" : (variant?.fin ?? a.color);
     c.save();
     c.translate(26, 0);
     c.rotate(wiggle);
     c.scale(markings.tailLength, markings.tailFan);
     c.beginPath();
-    c.moveTo(-5, 0);
-    c.quadraticCurveTo(29, -30, 29, -19);
-    c.quadraticCurveTo(22, 0, 29, 19);
-    c.quadraticCurveTo(29, 30, -5, 0);
+    if (a.id === "molly") {
+      c.ellipse(12, 0, 18, 16, 0, 0, Math.PI * 2);
+    } else {
+      c.moveTo(-5, 0);
+      c.quadraticCurveTo(29, -30, 29, -19);
+      c.quadraticCurveTo(22, 0, 29, 19);
+      c.quadraticCurveTo(29, 30, -5, 0);
+    }
     c.fill();
     c.restore();
     if (a.id === "betta") {
-      c.fillStyle = "#db235d";
+      c.fillStyle = variant?.fin ?? "#db235d";
       c.beginPath();
       c.moveTo(17, -10);
       c.bezierCurveTo(75, -65, 65, 45, 15, 15);
@@ -671,7 +677,12 @@ export function drawFish(
     }
     c.beginPath();
     c.moveTo(-8, -17);
-    c.quadraticCurveTo(8, -38, 24, -13);
+    c.quadraticCurveTo(
+      8,
+      ["molly", "harlequin", "cherry_barb"].includes(a.id) ? -28 : -38,
+      24,
+      -13,
+    );
     c.fill();
     c.fillStyle = a.color;
     c.beginPath();
@@ -731,6 +742,23 @@ export function drawFish(
         c.ellipse(mark.x, mark.y, mark.size * 1.3, 1.2, -0.3, 0, Math.PI * 2);
         c.fill();
       }
+    }
+    if (a.id === "harlequin") {
+      c.fillStyle = "#303a38";
+      c.beginPath();
+      c.moveTo(1, -15);
+      c.lineTo(30, 0);
+      c.lineTo(1, 13);
+      c.closePath();
+      c.fill();
+    }
+    if (a.id === "cherry_barb") {
+      c.strokeStyle = "#493c2e";
+      c.lineWidth = 3;
+      c.beginPath();
+      c.moveTo(-33, 1);
+      c.lineTo(31, 1);
+      c.stroke();
     }
     if (variant && a.id === "guppy") {
       c.fillStyle = "#303b35";
@@ -1608,7 +1636,7 @@ export default function Scene(p: Props) {
             bubble.reachedAt = Date.now();
         }
         const toyTarget = selected
-          ? playTarget(f, Date.now(), command.current, true)
+          ? playTarget(f, Date.now(), command.current, true, w, h)
           : null;
         const target = selected
           ? commandActive
@@ -1623,6 +1651,7 @@ export default function Scene(p: Props) {
           time: ms / 1000,
           now: Date.now(),
           reduced: z.reduced,
+          daylight: ambience.daylight,
           tool: target ? "play" : z.tool,
           pointer: target,
           food: selected && target ? null : foodTarget,
@@ -1700,30 +1729,18 @@ export default function Scene(p: Props) {
             behavior.activity === "eating" ||
             behavior.activity === "following" ||
             behavior.activity === "chasing";
-          pos.x +=
-            dx *
-            motionBlend(
-              selected && interested
-                ? 0.035
-                : invited && target
-                  ? 0.01
-                  : interested
-                    ? 0.028
-                    : 0.013,
+          const gentleSpeed = ["snail", "crab", "shrimp"].includes(f.species)
+            ? 9
+            : 34 - progress(f) * 8;
+          Object.assign(
+            pos,
+            swimStep(
+              pos,
+              behavior,
               elapsed,
-            );
-          pos.y +=
-            (behavior.y - pos.y) *
-            motionBlend(
-              selected && interested
-                ? 0.035
-                : invited && target
-                  ? 0.012
-                  : interested
-                    ? 0.03
-                    : 0.018,
-              elapsed,
-            );
+              gentleSpeed * (interested ? 1.2 : 1),
+            ),
+          );
         }
         positions.current[f.id] = pos;
         if (drawing.current && selected) learners.current.add(f.id);
@@ -1757,7 +1774,7 @@ export default function Scene(p: Props) {
           c.save();
           c.strokeStyle = "#ffe578";
           c.lineWidth = 2;
-          c.setLineDash([4, 5]);
+          c.setLineDash([]);
           c.beginPath();
           c.ellipse(pos.x, pos.y, 58 * size, 35 * size, 0, 0, Math.PI * 2);
           c.stroke();
@@ -1784,10 +1801,10 @@ export default function Scene(p: Props) {
           nibbling,
         );
         c.restore();
-        if ((selected || invited) && !z.photoMode) {
+        if (invited && !selected && !z.photoMode) {
           c.save();
           c.translate(pos.x, Math.max(surface + 16, pos.y - 48 * size));
-          c.fillStyle = selected ? "#ffe578" : "#fff9db";
+          c.fillStyle = "#fff9db";
           c.strokeStyle = "#173c46";
           c.lineWidth = 2;
           c.beginPath();
@@ -1795,44 +1812,11 @@ export default function Scene(p: Props) {
           c.fill();
           c.stroke();
           c.beginPath();
-          const icon = selected
-            ? commandActive
-              ? command.current!.kind
-              : drawing.current
-                ? "draw"
-                : toyTarget && !manualTarget
-                  ? "replay"
-                  : "draw"
-            : "invite";
-          if (icon === "circle") {
-            c.arc(0, 0, 6, 0, Math.PI * 2);
-            c.stroke();
-          } else if (icon === "bubbles") {
-            c.arc(-3, 3, 3, 0, Math.PI * 2);
-            c.moveTo(7, -3);
-            c.arc(3, -3, 4, 0, Math.PI * 2);
-            c.stroke();
-          } else if (icon === "draw") {
-            c.moveTo(-5, 5);
-            c.lineTo(4, -5);
-            c.lineTo(7, -2);
-            c.lineTo(-3, 7);
-            c.closePath();
-            c.stroke();
-          } else if (icon === "invite") {
-            c.font = "bold 15px sans-serif";
-            c.textAlign = "center";
-            c.textBaseline = "middle";
-            c.fillStyle = "#173c46";
-            c.fillText("?", 0, 1);
-          } else {
-            c.moveTo(-4, -6);
-            c.lineTo(6, 0);
-            c.lineTo(-4, 6);
-            c.closePath();
-            c.fillStyle = "#173c46";
-            c.fill();
-          }
+          c.font = "bold 15px sans-serif";
+          c.textAlign = "center";
+          c.textBaseline = "middle";
+          c.fillStyle = "#173c46";
+          c.fillText("?", 0, 1);
           c.restore();
         }
         if (f.species === "frog") {
